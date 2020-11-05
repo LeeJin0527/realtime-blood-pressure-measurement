@@ -11,7 +11,7 @@ display mode
 
 	1. ECG(심전도) mode
 		
-		시계를 찾 상태에서, 피부가 electrodes 2와 3에 닿아야함.
+		시계를 찬 상태에서, 피부가 electrodes 2와 3에 닿아야함.
 		
 	2. PPG(광용적맥파) mode
 		
