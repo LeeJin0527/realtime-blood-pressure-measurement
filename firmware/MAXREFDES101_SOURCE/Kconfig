@@ -1,0 +1,165 @@
+mainmenu "MAXIM MAX326XXX mBED EVKit platform configuration"
+
+config CONFIG_NAME
+	string "Config name"
+
+menu "Platform setup"
+choice
+	prompt "Select mBED platform"
+
+config PLATFORM_MAX32600MBED
+	bool "MAX32600MBED"
+	help
+		MAX32600MBED mBED platform.
+
+config PLATFORM_MAX32625MBED
+	bool "MAX32625MBED"
+	help
+		MAX32625MBED mBED platform.
+
+config PLATFORM_MAX32630FTHR
+	bool "MAX32630FTHR"
+	help
+		MAX32630FTHR feather wing mBED platform.
+
+config PLATFORM_MAX32625PICO
+	bool "MAX32625PICO"
+	help
+		MAX32625PICO mBED platform.
+
+endchoice
+
+config MAXIM_PLATFORM_NAME
+	string "Enter MAXIM platform name"
+	default "unknown"
+
+endmenu
+
+menu "PPG Sensor setup"
+config ENABLE_PPG
+	bool "Enable PPG sensor"
+choice
+	prompt "Select PPG sensor"
+	depends on ENABLE_PPG
+
+config PPG_MAX3011X
+	bool "MAX30110/MAX30111 PPG sensor"
+
+config PPG_MAX8614X
+	bool "MAX86140/MAX86141 PPG sensor"
+
+endchoice
+endmenu
+
+menu "ECG Sensor setup"
+config ENABLE_ECG
+	bool "Enable ECG sensor"
+choice
+	prompt "Select ECG sensor"
+	depends on ENABLE_ECG
+
+config CONFIG_ECG_MAX30001
+	bool "MAX30001 ECG sensor"
+endchoice
+endmenu
+
+menu "Temperature Sensor setup"
+config ENABLE_TP
+	bool "Enable TP sensor"
+choice
+	prompt "Select TP sensor"
+	depends on ENABLE_TP
+
+config CONFIG_TP_MAX30205
+	bool "MAX30205 Temp sensor"
+endchoice
+endmenu
+
+menu "Pressure Sensor setup"
+config ENABLE_BMP280
+	bool "Enable BMP 280"
+endmenu
+
+menu "Flash Device Setup"
+config ENABLE_MX25U
+	bool "Enable MX25U NOR FLASH"
+endmenu
+
+
+menu "Accelerometer setup"
+config ENABLE_ACCEL
+	bool "Enable Accelerometer"
+choice
+	prompt "Select Accelerometer"
+	depends on ENABLE_ACCEL
+
+config ACCEL_BMI160
+	bool "BMI160 accelerometer"
+
+config ACCEL_BMA280
+	bool "BMA280 accelerometer"
+
+config ACCEL_LIS2DH
+	bool "LIS2DH accelerometer"
+
+endchoice
+endmenu
+
+menu "Display setup"
+config ENABLE_DISPLAY
+	bool "Enable Display"
+choice
+	prompt "Select Display"
+	depends on ENABLE_DISPLAY
+
+config OLED_ADAFRUIT_SSD1306
+	bool "Adafruit_SSD1306 OLED"
+
+config LCD_LS013B7DH03
+	bool "Sharp LS013B7DH03 LCD"
+
+endchoice
+endmenu
+
+menu "TestComm Setup"
+config ENABLE_TESTCOMM
+	bool "Enable TestComm"
+	depends on ENABLE_ECG
+	depends on ENABLE_TP
+	depends on ENABLE_BMP280
+	depends on ENABLE_MX25U
+	depends on ACCEL_BMI160
+	default n
+endmenu
+
+menu "WHRM setup"
+config ENABLE_WHRM
+	bool "Enable WHRM"
+endmenu
+
+menu "Memory debug setup"
+config ENABLE_MEMORY_DEBUG
+	bool "Enable memory debug"
+if ENABLE_MEMORY_DEBUG
+
+config MBED_MEM_TRACING_ENABLED
+	bool "mbed memory tracing"
+	help
+		mbed Runtime memory tracing
+		https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/runtime_mem_trace/
+
+config MBED_HEAP_STATS_ENABLED
+	bool "mbed heap stats"
+	help
+		Runtime heap statistics
+		https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/runtime_stats/#heap-statistics
+
+config MBED_STACK_STATS_ENABLED
+	bool "mbed stack stats"
+	help
+		Runtime stack statistics
+		https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/runtime_stats/#stack-statistics
+
+
+endif
+endmenu
