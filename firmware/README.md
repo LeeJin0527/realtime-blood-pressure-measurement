@@ -48,16 +48,18 @@ Drivers.Interfaces.DSInterface.cpp
 
 Utilities.WatchInterface.cpp
 
-
+```c++
 //
 // BLE
 //
+
 #include "BLE.h"
 #include "BLE_ICARUS.h"
 #ifdef ENABLE_BLETEST_COMM
 #include "BleTestComm.h"
 BleTestComm bleTestComm(&microUSB);
 #endif
+```
 
 BLE.h에서는 user가 바로 BLE instance에 접근하기보다는 BLE instance를 가지고 있는 singleton(s)로 부터 액세스하도록 해야한다.
 
