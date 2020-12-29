@@ -78,6 +78,64 @@ API를 사용해서 처리. onEventsToProcess() -> processEvents()
 
 ***
 
+***
+
+```c++
+void writeCharCallback(const GattWriteCallbackParams *params)
+{
+	uint8_t data[BLE_READWRITE_CHAR_ARR_SIZE] = {0};
+	/* Check to see what characteristic was written, by handle */
+	printf("writeCharCallback %p\r\n", Thread::gettid());
+	if(params->handle == writeChar.getValueHandle()) {
+		printf("Data received: length = %d, data = 0x",params->len);
+		for(int x=0; x < params->len; x++) {
+			if ((BLE_DS_INTERFACE != NULL) && (params->data[x] != 0)) {
+				BLE_DS_INTERFACE->build_command((char)params->data[x]);
+			}
+			printf("%x-", params->data[x]);
+		}
+		printf("\n\r");
+	}
+	/* Update the notifyChar with the value of writeChar */
+	BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(writeChar.getValueHandle(), data, BLE_READWRITE_CHAR_ARR_SIZE);
+}
+```
+
+여기서 params값을 통해 command 문자열 완성시키고, 
+
+***
+
+***
+
+## Send part(peripheral -> central)
+
+```c++
+int BLE_Icarus_AddtoQueue(uint8_t *data_transfer, int32_t buf_size, int32_t data_size) {
+	int ret = 0;
+	//printf("size is: %d\r\n", size);
+	// TODO: Append a known character to the byte array in case size is
+	// less than 20 bytes
+	while ((data_size % BLE_NOTIFY_CHAR_ARR_SIZE) && data_size < buf_size)
+		data_transfer[data_size++] = 0;
+	mxm_assert_msg(!(data_size % 20), "BLE packet size must be multiple of 20 bytes");
+
+	while(data_size > 0){
+		ret = enqueue(&BLEQUEUE, data_transfer);
+		data_size -= BLE_NOTIFY_CHAR_ARR_SIZE;
+		data_transfer += BLE_NOTIFY_CHAR_ARR_SIZE;
+	}
+
+	if(ret != 0)
+		printf("BLE_Icarus_AddtoQueue has failed\r\n");
+
+	return ret;
+}
+```
+
+***
+
+여기서 salve가 master에게 데이터를 전송. 찾아보면 여러 센서 소스 코드(dsinterface, ecgcomm, sensorcomm, tempcomm)에서 해당 함수를 호출함
+
 ## Reference
 
 BLE 관련 문서
@@ -88,4 +146,4 @@ BLE 관련 문서
 
 3. [안드로이드와 블루투스 통신하기](https://devbin.kr/mobile-%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EB%B8%94%EB%A3%A8%ED%88%AC%EC%8A%A4-ble-%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0/)
 
-
+4. [블루투스 개요및 BLE](https://m.blog.naver.com/min95701/220619132797)
