@@ -101,7 +101,9 @@ void writeCharCallback(const GattWriteCallbackParams *params)
 }
 ```
 
-여기서 params값을 통해 command 문자열 완성시키고, 
+정확한지는 모르겟지만 여기서 params값을 통해 command 문자열 완성시킴 
+
+후에 build_command() 호출 후에 cmd_str 문자열값을 parse_command()를 호출하여 해당되는 기능(temp, ecg, ppg)을 호출
 
 ***
 
@@ -135,6 +137,29 @@ int BLE_Icarus_AddtoQueue(uint8_t *data_transfer, int32_t buf_size, int32_t data
 ***
 
 여기서 salve가 master에게 데이터를 전송. 찾아보면 여러 센서 소스 코드(dsinterface, ecgcomm, sensorcomm, tempcomm)에서 해당 함수를 호출함
+
+***
+2020/12/29
+
+```c++
+					case DISPLAYMODE_PPG :
+
+						// Before switching to PPG screen, stop all sensors
+						if (!dsInterface.recordingStarted) {
+							dsInterface.stopcommand();
+							dsInterface.parse_command_str("set_reg ppg 2a 10");
+							dsInterface.parse_command_str("set_reg ppg 23 ff");
+							dsInterface.parse_command_str("read ppg 0");
+						}
+
+						break;
+```
+
+main.cpp에 있는 display mode에 관한 코드인데, Dsinterface.cpp에 가보면 set_reg에 관한 명령어는 정의가 되어 있지 않은거 같음
+
+이것때문에 device studio에서 ppg값을 설정하거나 읽는게 안되는건지?
+
+***
 
 ## Reference
 
