@@ -161,6 +161,20 @@ main.cpp에 있는 display mode에 관한 코드인데, Dsinterface.cpp에 가�
 
 ***
 
+***
+
+GATT 예제
+
+https://os.mbed.com/teams/Bluetooth-Low-Energy/code/BLE_GATT_Example/
+
+***
+
+***
+
+https://www.oreilly.com/library/view/getting-started-with/9781491900550/ch04.html
+
+***
+
 ## Reference
 
 BLE 관련 문서
