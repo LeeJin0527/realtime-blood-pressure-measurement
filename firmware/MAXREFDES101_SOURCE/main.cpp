@@ -460,7 +460,6 @@ int main()
 			}
 
 		}
-		//pc.printf("test!\n");
 
 		watchInterface.execute();
 		process_ble();
@@ -501,7 +500,11 @@ int tmp;
 
 	if (BLE::Instance().gap().getState().connected) {
 		tmp = BLE_Icarus_TransferDataFromQueue();
-		printf("연결됐습니다!\r\n");
+		if(global_test == 1){
+			global_test =0;
+		printf("tmp = %d\r\n", tmp);
+		printf("BLE가 연결되었습니다.\r\n");
+		}
 		
 		//if(global_test == 1)ledStatus.set_state(LED_OFF, LED_ON, LED_OFF);
 		//if(global_test == 0)ledStatus.set_state(LED_OFF, LED_OFF, LED_ON);
