@@ -177,8 +177,59 @@ https://www.oreilly.com/library/view/getting-started-with/9781491900550/ch04.htm
 
 ***
 
+현재 read/write characteristic을 통해서 값을 측정하고자 하는 센싱 정보와 측정 세팅정보를 문자열(string command)을 아스키 코드값으로 client에서 server로 전달하면
+server에서는 먼저 write 이벤트 발생시 수행되어지는 callback 함수 writeCharCallback()를 호출함.
+
+writeCharCallback()함수에서는 '\n'또는 '\r'에 해당되는 문자값이 나올때까지 command를 저장하고 사전 처리를 하는 BLE_DS_INTERFACE->build_command()함수를
+호출함.
+
+'\n'또는 '\r'값이 들어오면 parse_command()함수를 호출하여 대응되는 command에 관련된 센싱 세팅값과 센싱 함수를 호출
+
+커맨드 목록은 아래와 같음.
+
+```c++
+static const char *glbl_cmds[] = {
+	"stop",
+	"get_device_info",
+	"silent_mode 0",
+	"silent_mode 1",
+	"pause 0",
+	"pause 1",
+	"enable console",
+	"disable console",
+    "set_cfg lcd time",
+    "set_cfg flash log",
+	"set_cfg stream ascii", // set streaming mode to ascii
+	"set_cfg stream bin",   // set streaming mode to binary
+	"set_cfg report 1",   	//set report mode to 1 (brief)
+	"set_cfg report 2"		// set report mode to 2 (long)
+};
+```
+
+각 센서들에 속해있는 함수에서 자기 자신과 관련된 문자열(예를 들어 온도 센서의 경우 문자열에 temp가 들어가면)이 있으면 센싱 값을 블루투스로 송신
+
+송신할 때 각 센서는 자기 자신만의 메서드 BLE_Icarus_AddtoQueue()를 호출(이 부분은 확실치 않음. why : 센싱 값은 data_packet에서 실질적으로 전송되는거 같음)
+
+아래 이미지는 온도 센싱을 예시로 해당되는 커맨드 문자열 "read temp 0"를 블루투스 write characteristic 이용하여 넘겨줌.
+
+## 현재 센싱 정보값을 블루투스로 read하는 방법을 몰라 따로 read characteristic을 따로 만들어준뒤에 값을 읽고 있는중입니다.
+
+![온도값읽기성공](./images/success_read_temp.JPG)
+
+***
+
+
+***
+
 센싱 정보에 대한 데이터 패킷의 정보는 각 센싱comm.h파일에 확인할 수 있음.
 현재 temp기준으로 작업중...
+
+온도의 경우, data packet을 전송할때 패킷 구조가 AA : counting : 온도값 상위 2자리 : 온도값 하위 2자리 : CRC 형태를 띔
+온도의 경우 한번에 8비트를 표현할 수 있으므로 255까지는 표현할 수 있음
+
+따라서 상위 2자리는 256을 나눈 나머지값, 하위 2자리는 256으로 나눈 몫값 
+
+![온도값읽기성공](./images/success_postprocess_temp.JPG)
 
 ***
 
