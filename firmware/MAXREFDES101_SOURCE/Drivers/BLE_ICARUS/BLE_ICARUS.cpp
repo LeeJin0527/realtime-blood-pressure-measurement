@@ -43,8 +43,7 @@
 
 UUID customServiceUUID("00001523-1212-efde-1523-785feabcd123");
 UUID notifyCharUUID(  "00001011-1212-efde-1523-785feabcd123");
-//UUID configRWCharUUID("00001027-1212-efde-1523-785feabcd123");
-UUID configRWCharUUID("00007777-1212-efde-1523-785feabcd123");
+UUID configRWCharUUID("00001027-1212-efde-1523-785feabcd123");
 
 const static char     DEVICE_NAME[]        = FIRMWARE_VERSION;
 static const uint16_t uuid16_list[]        = {0xFFFF}; //Custom UUID, FFFF is reserved for development
@@ -98,7 +97,6 @@ static uint8_t BLEOutBuffer[BLE_NOTIFY_CHAR_ARR_SIZE * MAX_BLE_QUEUE];
 static DSInterface *BLE_DS_INTERFACE;
 
 
-
 /*
  *  Handle writes to writeCharacteristic
  */
@@ -109,10 +107,6 @@ void writeCharCallback(const GattWriteCallbackParams *params)
 	printf("writeCharCallback %p\r\n", Thread::gettid());
 	if(params->handle == writeChar.getValueHandle()) {
 		printf("Data received: length = %d, data = 0x",params->len);
-
-		if(params->data[0] == 0x0a) global_test = 0;
-		if(params->data[0] == 0x02) global_test = 1;
-
 		for(int x=0; x < params->len; x++) {
 			if ((BLE_DS_INTERFACE != NULL) && (params->data[x] != 0)) {
 				BLE_DS_INTERFACE->build_command((char)params->data[x]);
@@ -200,14 +194,12 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
 	ble.gap().onConnection(connectionCallback);
 	ble.gattServer().onDataWritten(writeCharCallback);
 	/* Setup advertising */
-	
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE); // BLE only, no classic BT
 	ble.gap().setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED); // advertising type
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LOCAL_NAME, (uint8_t *)DEVICE_NAME, sizeof(DEVICE_NAME)); // add name
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, (uint8_t *)uuid16_list, sizeof(uuid16_list)); // UUID's broadcast in advertising packet
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
 	ble.gap().setAdvertisingInterval(100); // 100ms.
-	
 	/* Add our custom service */
 	ble.gattServer().addService(customService);
 	printf("bleInitComplete\n");
@@ -220,7 +212,6 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
 
 int BLE_Icarus_TransferData(uint8_t data_transfer[20]){
 	int ret;
-	
 	ret = BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(notifyChar.getValueHandle(), data_transfer, 20);
 	return ret;
 }
@@ -240,9 +231,6 @@ int BLE_Icarus_TransferDataFromQueue(){
 			if(ret < 0)
 				break;
 			pr_debug("dequeued data for tx, %d remain\r\n", BLEQUEUE.num_item);
-			if(data_transfer[0] == 0x00){
-				for(i = 0; i < 20; i++)data_transfer[i]=0xAF;
-			}
 			BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(notifyChar.getValueHandle(), data_transfer, 20);
 		}
 #if defined(USE_BLE_TICKER_TO_CHECK_TRANSFER)
@@ -300,5 +288,3 @@ int BLE_ICARUS_Get_Mac_Address(char MacAdress[6]){
 	pr_info("BLE_ADV_NAME:%s", DEVICE_NAME);
     return 0;
 }
-
-

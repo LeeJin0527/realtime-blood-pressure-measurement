@@ -131,10 +131,10 @@ void GraphicsDisplay::character(int column, int row, int value) {
         hor = font[1];                       // get hor size of font
         vert = font[2];                      // get vert size of font
         bpl = font[3];                       // bytes per line
-        if (char_x + hor > (unsigned int)width()) {
+        if (char_x + hor > width()) {
             char_x = 0;
             char_y = char_y + vert;
-            if (char_y >= (unsigned int)height() - font[2]) {
+            if (char_y >= height() - font[2]) {
                 char_y = 0;
             }
         }     
