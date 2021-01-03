@@ -175,6 +175,13 @@ https://www.oreilly.com/library/view/getting-started-with/9781491900550/ch04.htm
 
 ***
 
+***
+
+센싱 정보에 대한 데이터 패킷의 정보는 각 센싱comm.h파일에 확인할 수 있음.
+현재 temp기준으로 작업중...
+
+***
+
 ## Reference
 
 BLE 관련 문서
