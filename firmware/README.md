@@ -206,6 +206,30 @@ static const char *glbl_cmds[] = {
 };
 ```
 
+```c++
+if(starts_with(&cmd_str[0],"read ppg 0")){
+		stream_type=0x00;
+	}
+	else if(starts_with(&cmd_str[0],"read ppg 1")){
+		stream_type=0x01;
+	}
+	else if(starts_with(&cmd_str[0],"read bpt 0")){
+		stream_type=0x02;
+	}
+	else if(starts_with(&cmd_str[0],"read bpt 1")){
+		stream_type=0x03;
+	}
+	else if(starts_with(&cmd_str[0],"read ecg 1")){
+		stream_type=0x04;
+	}
+	else if(starts_with(&cmd_str[0],"read ecg 2")){
+		stream_type=0x05;
+	}
+	else if(starts_with(&cmd_str[0],"read temp 0")){
+		stream_type=0x06;
+	}
+```
+
 각 센서들에 속해있는 함수에서 자기 자신과 관련된 문자열(예를 들어 온도 센서의 경우 문자열에 temp가 들어가면)이 있으면 센싱 값을 블루투스로 송신
 
 송신할 때 각 센서는 자기 자신만의 메서드 BLE_Icarus_AddtoQueue()를 호출(이 부분은 확실치 않음. why : 센싱 값은 data_packet에서 실질적으로 전송되는거 같음)
