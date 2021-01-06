@@ -45,8 +45,6 @@
 
 
 
-
-
 enum BLE_State {
 	BLE_DOWN,
 	BLE_STARTING,

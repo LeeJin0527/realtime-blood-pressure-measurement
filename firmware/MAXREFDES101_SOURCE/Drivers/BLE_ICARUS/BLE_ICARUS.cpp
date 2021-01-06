@@ -43,7 +43,10 @@
 
 UUID customServiceUUID("00001523-1212-efde-1523-785feabcd123");
 UUID notifyCharUUID(  "00001011-1212-efde-1523-785feabcd123");
-UUID configRWCharUUID("00001027-1212-efde-1523-785feabcd123");
+//UUID configRWCharUUID("00001027-1212-efde-1523-785feabcd123");
+UUID configRWCharUUID("00007777-1212-efde-1523-785feabcd123");
+UUID configRCharUUID("00001234-1212-efde-1523-785feabcd123");
+//only read용 UUID
 
 const static char     DEVICE_NAME[]        = FIRMWARE_VERSION;
 static const uint16_t uuid16_list[]        = {0xFFFF}; //Custom UUID, FFFF is reserved for development
@@ -81,8 +84,12 @@ GattCharacteristic notifyChar(notifyCharUUID, notifyValue, BLE_NOTIFY_CHAR_ARR_S
 static uint8_t configValue[BLE_READWRITE_CHAR_ARR_SIZE] = {3,0,254,37};
 ReadWriteArrayGattCharacteristic<uint8_t, sizeof(configValue)> writeChar(configRWCharUUID, configValue);
 
+/* only read characteristic 추가*/
+static uint8_t configReadValue[BLE_NOTIFY_CHAR_ARR_SIZE] = {0};
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(configReadValue)> readChar(configRCharUUID, configReadValue);
+
 /* Set up custom service */
-GattCharacteristic *characteristics[] = {&writeChar,&notifyChar};
+GattCharacteristic *characteristics[] = {&writeChar,&notifyChar, &readChar};
 GattService        customService(customServiceUUID, characteristics, sizeof(characteristics) / sizeof(GattCharacteristic *));
 
 // Temporary Fixes to be removed
@@ -97,6 +104,7 @@ static uint8_t BLEOutBuffer[BLE_NOTIFY_CHAR_ARR_SIZE * MAX_BLE_QUEUE];
 static DSInterface *BLE_DS_INTERFACE;
 
 
+
 /*
  *  Handle writes to writeCharacteristic
  */
@@ -107,6 +115,10 @@ void writeCharCallback(const GattWriteCallbackParams *params)
 	printf("writeCharCallback %p\r\n", Thread::gettid());
 	if(params->handle == writeChar.getValueHandle()) {
 		printf("Data received: length = %d, data = 0x",params->len);
+
+		if(params->data[0] == 0x0a) global_test = 0;
+		if(params->data[0] == 0x02) global_test = 1;
+
 		for(int x=0; x < params->len; x++) {
 			if ((BLE_DS_INTERFACE != NULL) && (params->data[x] != 0)) {
 				BLE_DS_INTERFACE->build_command((char)params->data[x]);
@@ -194,12 +206,14 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
 	ble.gap().onConnection(connectionCallback);
 	ble.gattServer().onDataWritten(writeCharCallback);
 	/* Setup advertising */
+	
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE); // BLE only, no classic BT
 	ble.gap().setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED); // advertising type
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LOCAL_NAME, (uint8_t *)DEVICE_NAME, sizeof(DEVICE_NAME)); // add name
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, (uint8_t *)uuid16_list, sizeof(uuid16_list)); // UUID's broadcast in advertising packet
 	ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
 	ble.gap().setAdvertisingInterval(100); // 100ms.
+	
 	/* Add our custom service */
 	ble.gattServer().addService(customService);
 	printf("bleInitComplete\n");
@@ -212,6 +226,7 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
 
 int BLE_Icarus_TransferData(uint8_t data_transfer[20]){
 	int ret;
+	
 	ret = BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(notifyChar.getValueHandle(), data_transfer, 20);
 	return ret;
 }
@@ -231,7 +246,25 @@ int BLE_Icarus_TransferDataFromQueue(){
 			if(ret < 0)
 				break;
 			pr_debug("dequeued data for tx, %d remain\r\n", BLEQUEUE.num_item);
+			if(data_transfer[0] == 0x00){
+				for(i = 0; i < 20; i++)data_transfer[i]=0xAF;
+			}
 			BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(notifyChar.getValueHandle(), data_transfer, 20);
+			BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(readChar.getValueHandle(), data_transfer, 20);
+			
+			/********* 디버깅 용도 **********/
+			
+			
+			
+			if(data_transfer[0] == 0xaa){
+				printf("[count : %3d]현재 온도는 = %4.2f\r\n", data_transfer[1], (data_transfer[2] + data_transfer[3]*256)/100.0);
+			}
+			else{
+				printf("%3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d ", data_transfer[0], data_transfer[1], data_transfer[2], data_transfer[3], data_transfer[4], data_transfer[5], data_transfer[6], data_transfer[7], data_transfer[8], data_transfer[9], data_transfer[10], data_transfer[111], data_transfer[12], data_transfer[13], data_transfer[14], data_transfer[15]);
+			}
+
+
+			/*******************************/
 		}
 #if defined(USE_BLE_TICKER_TO_CHECK_TRANSFER)
 		TICKER_BLE.attach(&Ble_Can_Transfer_Toggle, BLE_TICKER_PERIOD);
@@ -288,3 +321,5 @@ int BLE_ICARUS_Get_Mac_Address(char MacAdress[6]){
 	pr_info("BLE_ADV_NAME:%s", DEVICE_NAME);
     return 0;
 }
+
+

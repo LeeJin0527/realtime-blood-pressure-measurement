@@ -131,6 +131,7 @@ BMI160_I2C bmi160_dev(&I2CM2, BMI160_I2C::I2C_ADRS_SDO_LO, &bmi160_int_pin);
 //
 // ECG SENSOR
 //
+
 #include "EcgComm.h"
 EcgComm ecgCommHandler(&microUSB);
 
@@ -209,8 +210,11 @@ void print_memory_info();
 #endif
 
 
+int global_test = 1;
+
 int main()
 {
+	
 	wait_ms(100);
 
 	HSP_mount_filesystem();
@@ -249,6 +253,7 @@ int main()
 	//
 	// MAX30001
 	//
+
 	printf("Init MAX30001 callbacks, interrupts...\r\n");
 	MAX30001_Helper m_max30001helper(&max30001, &max30001_InterruptB, &max30001_Interrupt2B);
 	Peripherals::setMAX30001(&max30001);
@@ -287,14 +292,18 @@ int main()
 
 
     //Blink green if SmartSensor is present, yellow otherwise
+	
 	SS_STATUS status = ssInterface.ss_comm_check();
 	if (status == SS_SUCCESS)
-		ledStatus.set_state(LED_OFF, LED_ON, LED_OFF);
+		//ledStatus.set_state(LED_OFF, LED_ON, LED_OFF);
+		ledStatus.set_state(LED_ON, LED_OFF, LED_OFF);
+		//바꿔봄, red is present
 	else
 		ledStatus.set_state(LED_ON, LED_ON, LED_OFF);
-	ledStatus.blink(100, 1900);
-    ledStatus.blink(100, 1900);
-
+	//ledStatus.blink(100, 1900);
+    //ledStatus.blink(100, 1900);
+	ledStatus.blink(500, 500);
+	
 	//
 	//MAIN CONTEXT LOOP
 	//
@@ -346,19 +355,24 @@ int main()
 
 		}
 
+
 		// Sensor Interface Updates on Watch display mode changes
 		if (watchInterface.modeUpdated) {
 
 			watchInterface.modeUpdated = false;
 			watchInterface.DisplayModeUpdated();
+			//여기서 ppg_lcd_count를 0으로 초기화하는데...
+			//why..?
+			//ppg_lcd_count는 Watchinterface.cpp에서만 관리하기때문?
 
 			// Tethered mode
 			if ((watchInterface.BLE_Interface_Exists) || (watchInterface.USB_Interface_Exists)) {
 
 
 				// Stop all sensors
-				if(!dsInterface.recordingStarted)
+				if(!dsInterface.recordingStarted){
 					dsInterface.stopcommand();
+				}
 
 
 			} else
@@ -383,6 +397,7 @@ int main()
 						}
 
 						break;
+						
 					case DISPLAYMODE_PPG :
 
 						// Before switching to PPG screen, stop all sensors
@@ -394,6 +409,7 @@ int main()
 						}
 
 						break;
+						
 
 					case DISPLAYMODE_TEMP :
 
@@ -479,12 +495,35 @@ static void setup_ble(void)
 }
 
 static void process_ble(void)
-{
+{	
+int tmp;
 
 	if (BLE::Instance().gap().getState().connected) {
-		BLE_Icarus_TransferDataFromQueue();
+		tmp = BLE_Icarus_TransferDataFromQueue();
+		if(global_test == 1){
+			global_test =0;
+		printf("tmp = %d\r\n", tmp);
+		printf("BLE가 연결되었습니다.\r\n");
+		}
+		
+		//if(global_test == 1)ledStatus.set_state(LED_OFF, LED_ON, LED_OFF);
+		//if(global_test == 0)ledStatus.set_state(LED_OFF, LED_OFF, LED_ON);
+		//시리얼 포트로 디버깅이 안될때, led로 디버깅 했던 흔적입니다.
+		//추후에 혹시 시리얼 포트가 안될경우를 대비해서 주석처리 해놨습니다.
+		
+		
 	}
-	BLE::Instance().waitForEvent();
+	else{
+		if(global_test == 1)ledStatus.set_state(LED_ON, LED_OFF, LED_OFF);
+
+	}
+	
+	BLE::Instance().waitForEvent();	
+	//여기서 블루투스 연결및 해제관련된게 일어남
+
+	//BLE::Instance().processEvents();
+	//BLE::Instance().onEventsToProcess(BLE::);
+
 
 }
 

@@ -1,5 +1,4 @@
 [paths]
-mbed-studio-cache = c:\Users\JunGiKim\AppData\Local\Mbed Studio\library-cache\developer.mbed.org\teams\MaximIntegrated\code\USBDevice
 default = https://developer.mbed.org/teams/MaximIntegrated/code/USBDevice
 [ui]
 ignore.local = .hg/hgignore
