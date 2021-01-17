@@ -33,7 +33,7 @@ notify를 통해서 characteristic이 바뀔때마다 callback 함수에서 호�
 
 
 
-[![notify시연](https://www.youtube.com/watch?v=4-1Gxlas5qk/0.jpg)](https://www.youtube.com/watch?v=4-1Gxlas5qk) 
+[![notify시연](http://img.youtube.com/vi/4-1Gxlas5qk/0.jpg)](https://www.youtube.com/watch?v=4-1Gxlas5qk) 
 
 ## References
 
