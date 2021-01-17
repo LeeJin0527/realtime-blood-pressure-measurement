@@ -5,7 +5,6 @@
 package com.example.heartbeat;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -35,6 +34,8 @@ public class BLEControlActivity extends Activity{
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    private byte[] tmp_data;
+
     private TextView mDisplayData;
 
     private TextView mConnectionState;
@@ -45,11 +46,40 @@ public class BLEControlActivity extends Activity{
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+
+    private BluetoothGattCharacteristic writeCharacteristicObject;
+    private BluetoothGattCharacteristic readCharacteristicObject;
+    private BluetoothGattCharacteristic notifyCharacteristicObject;
+    //read, write, notify를 위한 GATT characteristic
+
+    private TextView mCountField;
+    private TextView mSensorValueField;
+    //UI id참조 변수 정의
+    
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
+
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+
+    //hex 배열 데이터를 처리해서 text view ui에 표시해주는 메소드
+    private void process_data(byte []data){
+        data = notifyCharacteristicObject.getValue();
+        //StringBuilder celcius_str = new StringBuilder();
+        //StringBuilder count_str = new StringBuilder();
+
+        int count_tmp = ((data[1] & 0xff));
+        double value_tmp = (((data[3] & 0xff) << 8 ) + (data[2] & 0xff))/100.0;
+
+        String count_str = String.valueOf(count_tmp);
+        String celcius_str = String.valueOf(value_tmp);
+
+        mCountField.setText(count_str);
+        mSensorValueField.setText(celcius_str);
+
+
+    }
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -87,8 +117,11 @@ public class BLEControlActivity extends Activity{
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                setupGattCharacteristic(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                process_data(notifyCharacteristicObject.getValue());
+                Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };
@@ -109,8 +142,10 @@ public class BLEControlActivity extends Activity{
                             // If there is an active notification on a characteristic, clear
                             // it first so it doesn't update the data field on the user interface.
                             if (mNotifyCharacteristic != null) {
-                                mBluetoothLeService.setCharacteristicNotification(
-                                        mNotifyCharacteristic, false);
+                                Log.i(TAG, "read내에서 notify set 수행");
+
+                                mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, true);
+
                                 mNotifyCharacteristic = null;
                             }
                             Log.i(TAG,"Read 분기문!");
@@ -150,44 +185,48 @@ public class BLEControlActivity extends Activity{
 
     public void btnTempClick(){
         byte[] str_cmd = {0x72, 0x65, 0x61, 0x64, 0x20, 0x74, 0x65, 0x6d, 0x70, 0x20, 0x30, 0x0a, 0x00, 0x00, 0x00, 0x00};
-        final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(0).get(0);//int로 index찾기 말고 좀더 효율적이고 직관적인 방법이 필요해보임...
-        Log.i(TAG, Integer.toString(characteristic.getProperties()));
-        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mBluetoothLeService.writeCharacteristic(characteristic, str_cmd);
-        //mBluetoothLeService.writeCharacteristic();
+        //read temp 0
+
+        writeCharacteristicObject.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(writeCharacteristicObject, str_cmd);
+        mBluetoothLeService.setCharacteristicNotification(notifyCharacteristicObject, true);
+
     }
 
     public void btnECGClick(){
         byte[] str_cmd = {0x72, 0x65, 0x61, 0x64, 0x20, 0x65, 0x63, 0x67, 0x20, 0x31, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00};
         //read ecg 1
-        final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(0).get(0);//int로 index찾기 말고 좀더 효율적이고 직관적인 방법이 필요해보임...
-        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mBluetoothLeService.writeCharacteristic(characteristic, str_cmd);
-        //mBluetoothLeService.writeCharacteristic();
+
+        writeCharacteristicObject.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(writeCharacteristicObject, str_cmd);
+        mBluetoothLeService.setCharacteristicNotification(notifyCharacteristicObject, true);
+
+
     }
 
     public void btnPPGClick(){
         byte[] str_cmd = {0x72, 0x65, 0x61, 0x64, 0x20, 0x70, 0x70, 0x67, 0x20, 0x30, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00};
         //read ppg 0
-        final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(0).get(0);//int로 index찾기 말고 좀더 효율적이고 직관적인 방법이 필요해보임...
-        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mBluetoothLeService.writeCharacteristic(characteristic, str_cmd);
-        //mBluetoothLeService.writeCharacteristic();
+
+        writeCharacteristicObject.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(writeCharacteristicObject, str_cmd);
+        mBluetoothLeService.setCharacteristicNotification(notifyCharacteristicObject, true);
+
     }
 
     public void btnSTOPClick(){
         byte[] str_cmd = {0x73, 0x74, 0x6f, 0x70, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         //read ppg 0
-        final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(0).get(0);//int로 index찾기 말고 좀더 효율적이고 직관적인 방법이 필요해보임...
-        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
-        mBluetoothLeService.writeCharacteristic(characteristic, str_cmd);
-        //mBluetoothLeService.writeCharacteristic();
+        writeCharacteristicObject.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothLeService.writeCharacteristic(writeCharacteristicObject, str_cmd);
+        mBluetoothLeService.setCharacteristicNotification(notifyCharacteristicObject, false);
+
     }
 
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
         mDataField.setText(R.string.no_data);
-        mDataField.setText(R.string.no_data);
+
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -204,7 +243,11 @@ public class BLEControlActivity extends Activity{
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
-        mDisplayData = (TextView) findViewById(R.id.display_data);
+
+
+        mCountField = (TextView) findViewById(R.id.sensor_count);
+        mSensorValueField = (TextView) findViewById(R.id.sensor_value);
+
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -308,16 +351,38 @@ public class BLEControlActivity extends Activity{
         });
     }
 
-    private void displayonlyData(String data){
-        if(data != null){
-
-        }
-    }
 
     private void displayData(String data) {
         if (data != null) {
             mDataField.setText(data);
-            mDisplayData.setText(data);
+
+        }
+    }
+    
+    //특정 service들을 구성하는 characteristics를 구해주는 매소드
+    private void setupGattCharacteristic(List<BluetoothGattService> gattServices){
+        if (gattServices == null) return;
+
+        for (BluetoothGattService gattService : gattServices) {
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                //notify
+                if(gattCharacteristic.getUuid().toString().equals("00001011-1212-efde-1523-785feabcd123")){
+                    notifyCharacteristicObject = gattCharacteristic;
+                }
+
+                //read
+                if(gattCharacteristic.getUuid().toString().equals("00001234-1212-efde-1523-785feabcd123")){
+                    readCharacteristicObject = gattCharacteristic;
+                }
+
+                //write
+                if(gattCharacteristic.getUuid().toString().equals("00001027-1212-efde-1523-785feabcd123")){
+                    writeCharacteristicObject = gattCharacteristic;
+                }
+            }
         }
     }
 

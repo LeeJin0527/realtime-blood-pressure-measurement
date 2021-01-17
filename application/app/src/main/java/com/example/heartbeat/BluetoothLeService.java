@@ -90,7 +90,6 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-            Log.i(TAG,"Characteristic" + characteristic.getUuid() + "written");
         }//이게 맞는지는 모르겟지만 추가해봄.
 
         @Override
@@ -106,6 +105,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+            Log.i(TAG, "READ콜백함수 트리거");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
@@ -115,6 +115,13 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+
+            StringBuilder sb = new StringBuilder();
+            byte[] original = characteristic.getValue();
+            for(final byte tmp : original){
+                sb.append(String.format("%02x", tmp&0xff));
+            }
+            Log.i(TAG, "변환 : "+ sb.toString());
         }
     };
 
@@ -283,8 +290,42 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+        Log.i(TAG, "특성으로 부터 읽은 uuid 는 " + characteristic.getUuid().toString());
 
-        // This is specific to Heart Rate Measurement.
+        List<BluetoothGattDescriptor>descriptors = characteristic.getDescriptors();
+        Log.i(TAG, characteristic.getDescriptors().get(0).getUuid().toString());
+
+        //BluetoothGattDescriptor descriptor = characteristic.getDescriptor(characteristic.getUuid());
+        //이거는 null값이 나타나는데 왜 그런거징...
+        //->해결) 위 코드에서는 notify의 uuid를 파라미터로 넘겨주고있음.
+        //따라서 notify의 descriptor의 uuid를 넘겨줘야함.
+        //아래는 log를 찍어본 결과임. uuid가 다름을 알수 있음
+        //I/BluetoothLeService: 특성으로 부터 읽은 uuid 는 00001011-1212-efde-1523-785feabcd123
+        //    00002902-0000-1000-8000-00805f9b34fb
+        //    디스크립터 목록 : [android.bluetooth.BluetoothGattDescriptor@16cf067c]
+        //    디스크립터 설정 부분 호출!
+
+
+        /**
+        Log.i(TAG, "디스크립터 목록 : "+ descriptors.toString());
+
+        if(descriptors.get(0) == null){
+            Log.i(TAG, "드스크립터가 null입니다");
+        }
+        if(descriptors.get(0) != null) {
+            Log.i(TAG, "디스크립터 설정 부분 호출!");
+            descriptors.get(0).setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+
+            mBluetoothGatt.writeDescriptor(descriptors.get(0));
+        }
+        **/
+
+        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+        if(descriptor != null){
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            mBluetoothGatt.writeDescriptor(descriptor);
+        }
+
 
     }
 
