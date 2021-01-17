@@ -268,3 +268,5 @@ BLE 관련 문서
 3. [안드로이드와 블루투스 통신하기](https://devbin.kr/mobile-%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EB%B8%94%EB%A3%A8%ED%88%AC%EC%8A%A4-ble-%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0/)
 
 4. [블루투스 개요및 BLE](https://m.blog.naver.com/min95701/220619132797)
+
+5. [현재 진행하고 있는 과제의 BLE 통신에  대해 개략적으로 알수 있음](https://dwenn.tistory.com/75)
