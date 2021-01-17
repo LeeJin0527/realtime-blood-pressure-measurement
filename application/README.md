@@ -31,7 +31,10 @@ notify를 통해서 characteristic이 바뀔때마다 callback 함수에서 호�
 
 좋은 소식은 DSinterface에 관한 명렁어 문서를 찾음.
 
-[notify 시연](https://www.youtube.com/watch?v=4-1Gxlas5qk)
+
+<iframe width="640" height="360" src="https://www.youtube.com/watch?v=4-1Gxlas5qk" frameborder="0" gesture="media" allowfullscreen=""></iframe>
+
+
 [![notify 시연](https://www.youtube.com/watch?v=4-1Gxlas5qk/0.jpg)](https://www.youtube.com/watch?v=4-1Gxlas5qk) 
 
 ## References
