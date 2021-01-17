@@ -22,6 +22,16 @@ BLE connection, read, write됨
 온도 버튼을 클릭하면 정상적으로 write되어 시계에서 온도값을 보냄
 마찬가지로 stop 커맨드도 정상적으로 write되어 센싱 중단 수행
 
+## 01.14~01.18
+
+read, notification 기능 공부및 추가
+
+notify를 통해서 characteristic이 바뀔때마다 callback 함수에서 호출되면서 데이터를 화면에 표시해주도록함.
+이 때, 간략하게 16진수 형태의 20byte배열 간략하게 알아봄
+
+좋은 소식은 DSinterface에 관한 명렁어 문서를 찾음.
+
+[notify 시연](https://www.youtube.com/watch?v=4-1Gxlas5qk)
 
 
 ## References
