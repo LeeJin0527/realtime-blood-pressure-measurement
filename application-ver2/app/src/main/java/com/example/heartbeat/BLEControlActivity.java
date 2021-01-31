@@ -139,7 +139,7 @@ public class BLEControlActivity extends Activity{
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
 
                 process_data(notifyCharacteristicObject.getValue());
-                Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                //Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
         }
     };

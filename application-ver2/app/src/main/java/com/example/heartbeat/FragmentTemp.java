@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,16 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.charts.LineChart;
-
-import java.util.Objects;
 
 public class FragmentTemp extends Fragment{
     Button start;
@@ -48,7 +37,7 @@ public class FragmentTemp extends Fragment{
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "temp");
+                ((MenuActivity)getActivity()).setViewField(view, "temp");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readtemp0);
                 start.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
@@ -59,7 +48,7 @@ public class FragmentTemp extends Fragment{
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "stop");
+                ((MenuActivity)getActivity()).setViewField(view, "stop");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_stop);
                 start.setVisibility(View.VISIBLE);
                 pause.setVisibility(View.GONE);

@@ -6,11 +6,12 @@ public class PPGData {
     private int x;
     private int y;
     private int z;
-    private int heartRate;
+    private double heartRate;
     private int heartRateConfidence;
 
     public void setPacket(byte[] packet) {
         this.packet = packet;
+        processData();
     }
 
     public void setCount(int count){
@@ -61,11 +62,18 @@ public class PPGData {
         return this.z;
     }
 
-    public int getHeartRate() {
+    public double getHeartRate() {
         return this.heartRate;
     }
 
     public int getHeartRateConfidence() {
         return this.heartRateConfidence;
+    }
+
+    private void processData(){
+        byte[] dataPacket = this.packet;
+
+        this.heartRate = (double) (((dataPacket[13] & 0xfc) >> 2 )+ ((dataPacket[14] & 0x3f) << 6))/10.0;
+        this.heartRateConfidence = ((dataPacket[14] & 0xc0) >> 6) + ((dataPacket[15] & 0x3f) << 2);
     }
 }

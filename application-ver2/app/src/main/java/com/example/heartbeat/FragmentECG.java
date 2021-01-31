@@ -31,14 +31,14 @@ public class FragmentECG extends Fragment{
 
         start = (Button)view.findViewById(R.id.start);
         pause = (Button)view.findViewById(R.id.pause);
-        sensorField = (TextView)view.findViewById(R.id.ecg_sensor_value);
+        sensorField = (TextView)view.findViewById(R.id.ecg_rtor_value);
         myGraph = new RealTimeGraph(view);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "ecg");
-                ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readecg1);
+                ((MenuActivity)getActivity()).setViewField(view, "ecg");
+                ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readecg2);
                 start.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
                 realTimeStart();
@@ -48,7 +48,7 @@ public class FragmentECG extends Fragment{
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "stop");
+                ((MenuActivity)getActivity()).setViewField(view, "stop");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_stop);
                 start.setVisibility(View.VISIBLE);
                 pause.setVisibility(View.GONE);

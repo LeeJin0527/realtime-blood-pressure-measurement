@@ -38,7 +38,7 @@ public class FragmentPPG extends Fragment{
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "ppg");
+                ((MenuActivity)getActivity()).setViewField(view, "ppg");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readppg0);
                 start.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
@@ -52,7 +52,7 @@ public class FragmentPPG extends Fragment{
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                ((MenuActivity)getActivity()).setTempvaluefield(view, "stop");
+                ((MenuActivity)getActivity()).setViewField(view, "stop");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_stop);
                 start.setVisibility(View.VISIBLE);
                 pause.setVisibility(View.GONE);

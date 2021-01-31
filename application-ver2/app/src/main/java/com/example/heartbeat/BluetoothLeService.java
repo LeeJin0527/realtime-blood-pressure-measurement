@@ -105,7 +105,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            Log.i(TAG, "READ콜백함수 트리거");
+            //Log.i(TAG, "READ콜백함수 트리거");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
@@ -290,10 +290,10 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
-        Log.i(TAG, "특성으로 부터 읽은 uuid 는 " + characteristic.getUuid().toString());
+        //Log.i(TAG, "특성으로 부터 읽은 uuid 는 " + characteristic.getUuid().toString());
 
         List<BluetoothGattDescriptor>descriptors = characteristic.getDescriptors();
-        Log.i(TAG, characteristic.getDescriptors().get(0).getUuid().toString());
+        //Log.i(TAG, characteristic.getDescriptors().get(0).getUuid().toString());
 
         //BluetoothGattDescriptor descriptor = characteristic.getDescriptor(characteristic.getUuid());
         //이거는 null값이 나타나는데 왜 그런거징...
@@ -356,6 +356,6 @@ public class BluetoothLeService extends Service {
             mBluetoothGatt.writeCharacteristic(characteristic);
         }
 
-        Log.i(TAG, "쓰기 : " + new String(cmd_str));
+        //Log.i(TAG, "쓰기 : " + new String(cmd_str));
     }
 }

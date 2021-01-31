@@ -37,6 +37,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import com.example.heartbeat.data.ECGData;
+import com.example.heartbeat.data.PPGData;
+import com.example.heartbeat.data.TempData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.LineData;
@@ -67,8 +70,20 @@ public class MenuActivity extends AppCompatActivity{
     //현재 temp, ppg, or ecg인지 알 수 있는 flag
 
     private TextView tempField;
-    private TextView ecgField;
+
+    private TextView ecgCountField;
+    private TextView ecgRtoRField;
+    private TextView ecgRtoRBpmField;
+    private TextView ecg1Field;
+    private TextView ecg2Field;
+    private TextView ecg3Field;
+
     private TextView ppgField;
+    private TextView ppgConfidenceField;
+
+    private TempData tempData;
+    private ECGData ecgData;
+    private PPGData ppgData;
 
     private long lastTimeBackPressed;
 
@@ -109,7 +124,7 @@ public class MenuActivity extends AppCompatActivity{
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 setupGattCharacteristic(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                //Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
 
                 process_data(notifyCharacteristicObject.getValue());
             }
@@ -133,6 +148,11 @@ public class MenuActivity extends AppCompatActivity{
         Button tempbtn = (Button)findViewById(R.id.tempbtn);
         Button ecgbtn = (Button)findViewById(R.id.ecgbtn);
         Button ppgbtn = (Button)findViewById(R.id.ppgbtn);
+
+        // 데이터 핸들링 객체 initialize
+        tempData = new TempData();
+        ppgData = new PPGData();
+        ecgData = new ECGData();
 
         tempbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,26 +227,7 @@ public class MenuActivity extends AppCompatActivity{
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
-/**
-    @Override
-    public void onBackPressed() {
-        //프래그먼트 onBackPressedListener사용
-        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        for(Fragment fragment : fragmentList){
-            if(fragment instanceof onBackPressedListener){
-                ((onBackPressedListener)fragment).onBackPressed();
-                return;
-            }
-        }
 
-        //두 번 클릭시 어플 종료
-        if(System.currentTimeMillis() - lastTimeBackPressed < 1500){
-            finish();
-            return;
-        }
-        lastTimeBackPressed = System.currentTimeMillis();
-        Toast.makeText(this,"'뒤로' 버튼을 한 번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show();
-    }**/
 
     //특정 service들을 구성하는 characteristics를 구해주는 매소드
     private void setupGattCharacteristic(List<BluetoothGattService> gattServices){
@@ -300,25 +301,29 @@ public void process_data(byte[] data){
 
 
         if(mode.equals("temp")){
-            double value_tmp = (((data[3] & 0xff) << 8 ) + (data[2] & 0xff))/100.0;
-            valueForGraph = value_tmp;
-            tempField.setText(String.valueOf(value_tmp));
+            tempData.setPacket(data);
+            valueForGraph = tempData.getValue();
+            tempField.setText(String.valueOf(tempData.getValue()));
         }
         else if(mode.equals("ecg")){
-            double value_tmp = (((data[3] & 0xff) << 8 ) + (data[2] & 0xff))/100.0;
-            valueForGraph = value_tmp;
-
+            ecgData.setPacket(data);
+            valueForGraph = ecgData.getRtoRBpm();
+            ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
+            ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
+            //ecgCountField.setText(String.valueOf(ecgData.getCount()));
+            //ecg1Field.setText(String.valueOf(ecgData.getEcg1()));
         }
         else if(mode.equals("ppg")){
-            double value_tmp = (((data[3] & 0xff) << 8 ) + (data[2] & 0xff))/100.0;
-            valueForGraph = value_tmp;
-            ppgField.setText(String.valueOf(value_tmp));
+            ppgData.setPacket(data);
+            valueForGraph = (double) ppgData.getHeartRate();
+            ppgField.setText(String.valueOf(ppgData.getHeartRate()));
+            ppgConfidenceField.setText(String.valueOf(ppgData.getHeartRateConfidence()) + "%");
         }else if(mode.equals("stop")){
             return;
         }
 }
 
-public void setTempvaluefield(View view, String modeConfig){
+public void setViewField(View view, String modeConfig){
     mode = modeConfig;
 
     if(mode.equals("temp")){
@@ -327,6 +332,14 @@ public void setTempvaluefield(View view, String modeConfig){
 
     if(mode.equals("ppg")){
         ppgField = (TextView)view.findViewById(R.id.ppg_sensor_value);
+        ppgConfidenceField = (TextView)view.findViewById(R.id.ppg_sensor_confidence_value);
+    }
+
+    if(mode.equals("ecg")){
+        ecgRtoRField = (TextView)view.findViewById(R.id.ecg_rtor_value);
+        ecgRtoRBpmField = (TextView)view.findViewById(R.id.ecg_rtorbpm_value);
+        //ecgCountField = (TextView)view.findViewById(R.id.ecg_count_value);
+        //ecg1Field = (TextView)view.findViewById(R.id.ecg1_sensor_value);
     }
 }
 

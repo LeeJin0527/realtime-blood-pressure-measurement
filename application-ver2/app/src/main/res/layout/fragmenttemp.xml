@@ -11,7 +11,9 @@
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="380dp">
+        android:layout_height="320dp"
+        android:layout_marginBottom="15dp"
+        >
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/LineChart"
@@ -32,6 +34,8 @@
             android:layout_width="500px"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textSize="25dp"
+            android:textSelectHandle="@anim/fragment_fade_exit"
             android:text="측정하기" />
 
         <Button
@@ -43,24 +47,35 @@
             android:text="일시정지" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/shadow"
+        >
 
         <TextView
             android:id="@+id/sensor_count_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15px"
-            android:text="@string/sensor_count" />
+            android:layout_gravity="center"
+            android:text="측정 횟수" />
 
         <TextView
             android:id="@+id/sensor_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:layout_gravity="center"
             android:text="0" />
 
     </LinearLayout>
@@ -68,22 +83,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@drawable/shadow"
+        >
 
         <TextView
             android:id="@+id/sensor_value_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15px"
+            android:layout_gravity="center"
             android:text="@string/Temp_value" />
 
         <TextView
             android:id="@+id/temp_sensor_value"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="측정중"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_gravity="center"
+            />
     </LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>
