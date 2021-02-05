@@ -5,33 +5,66 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/tempbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="체온" />
-
-    <Button
-        android:id="@+id/ppgbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="PPG" />
-
-    <Button
-        android:id="@+id/ecgbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="ECG" />
-
-    <FrameLayout
-        android:id="@+id/menu_fragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-    </FrameLayout>
+        android:orientation="vertical">
 
 
+        <android.widget.Button
+            android:id="@+id/tempbtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="체온"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:autoSizeMaxTextSize="@dimen/cardview_compat_inset_shadow"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:background="@drawable/layout_bgc"
+            android:layout_weight="1"
+            >
+
+        </android.widget.Button>
+
+
+
+        <android.widget.Button
+            android:id="@+id/ppgbtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="PPG"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:autoSizeMaxTextSize="@dimen/cardview_compat_inset_shadow"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:background="@drawable/layout_bgc2"
+            android:layout_weight="1"
+            />
+
+
+        <android.widget.Button
+            android:id="@+id/ecgbtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="ECG"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:autoSizeMaxTextSize="@dimen/cardview_compat_inset_shadow"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:background="@drawable/layout_bgc3"
+            android:layout_weight="1"
+            />
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:id="@+id/menu_fragment"
+            />
+</LinearLayout>
 </LinearLayout>

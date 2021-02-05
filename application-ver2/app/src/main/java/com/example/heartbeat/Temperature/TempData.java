@@ -1,4 +1,4 @@
-package com.example.heartbeat.data;
+package com.example.heartbeat.Temperature;
 
 /**
  * setPacket()메서드를 호출하면, processData 메서드를 이용해서
@@ -34,6 +34,8 @@ public class TempData {
     public double getValue() {
         return value;
     }
+
+    public double convertCelciustoF(){return (this.value * (9/5.0)) + 32.0;}
 
     private void processData(){
         this.count = packet[1] & 0xff;

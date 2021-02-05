@@ -12,42 +12,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
-import com.example.heartbeat.data.ECGData;
-import com.example.heartbeat.data.PPGData;
-import com.example.heartbeat.data.TempData;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.charts.LineChart;
-
-import org.w3c.dom.Text;
+import com.example.heartbeat.ECG.FragmentECG;
+import com.example.heartbeat.PPG.FragmentPPG;
+import com.example.heartbeat.ECG.ECGData;
+import com.example.heartbeat.PPG.PPGData;
+import com.example.heartbeat.Temperature.FragmentTemp;
+import com.example.heartbeat.Temperature.TempData;
 
 public class MenuActivity extends AppCompatActivity{
     private final static String TAG = BLEControlActivity.class.getSimpleName();
@@ -70,6 +55,7 @@ public class MenuActivity extends AppCompatActivity{
     //현재 temp, ppg, or ecg인지 알 수 있는 flag
 
     private TextView tempField;
+    private TextView tempFsField;
 
     private TextView ecgCountField;
     private TextView ecgRtoRField;
@@ -87,7 +73,7 @@ public class MenuActivity extends AppCompatActivity{
 
     private long lastTimeBackPressed;
 
-    double valueForGraph = 0;
+    public double valueForGraph = 0;
 
 
 
@@ -304,10 +290,12 @@ public void process_data(byte[] data){
             tempData.setPacket(data);
             valueForGraph = tempData.getValue();
             tempField.setText(String.valueOf(tempData.getValue()));
+            tempFsField.setText(String.valueOf(((float) tempData.convertCelciustoF())));
+
         }
         else if(mode.equals("ecg")){
             ecgData.setPacket(data);
-            valueForGraph = ecgData.getRtoRBpm();
+            valueForGraph = ecgData.getEcg1() * 0.0001;
             ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
             ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
             //ecgCountField.setText(String.valueOf(ecgData.getCount()));
@@ -315,7 +303,7 @@ public void process_data(byte[] data){
         }
         else if(mode.equals("ppg")){
             ppgData.setPacket(data);
-            valueForGraph = (double) ppgData.getHeartRate();
+            valueForGraph = ppgData.getGrnCnt();
             ppgField.setText(String.valueOf(ppgData.getHeartRate()));
             ppgConfidenceField.setText(String.valueOf(ppgData.getHeartRateConfidence()) + "%");
         }else if(mode.equals("stop")){
@@ -328,6 +316,7 @@ public void setViewField(View view, String modeConfig){
 
     if(mode.equals("temp")){
         tempField = (TextView)view.findViewById(R.id.temp_sensor_value);
+        tempFsField = (TextView)view.findViewById(R.id.sensor_Fahrenheit_scale_count);
     }
 
     if(mode.equals("ppg")){

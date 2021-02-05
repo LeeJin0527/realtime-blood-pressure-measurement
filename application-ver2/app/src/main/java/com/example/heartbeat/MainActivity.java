@@ -49,7 +49,6 @@ public class MainActivity extends ListActivity{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getActionBar().setTitle(R.string.app_name);
         mHandler = new Handler();
 
         //해당 기기에서 BLE를 지원하는지 확인

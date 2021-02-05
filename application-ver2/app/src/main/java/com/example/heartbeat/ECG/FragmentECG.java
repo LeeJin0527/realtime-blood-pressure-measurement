@@ -1,4 +1,4 @@
-package com.example.heartbeat;
+package com.example.heartbeat.ECG;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.heartbeat.Command;
+import com.example.heartbeat.MenuActivity;
+import com.example.heartbeat.R;
+import com.example.heartbeat.RealTimeGraph;
+
 public class FragmentECG extends Fragment{
     Button start;
     Button pause;
@@ -22,9 +27,10 @@ public class FragmentECG extends Fragment{
     FrameLayout frameLayout;
     TextView sensorField;
     View view;
-    RealTimeGraph myGraph;
+    RealTimeGraphECG myGraph;
     Thread realTimeThread;
     Activity activity;
+    Boolean threadFlag;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragmentecg, container, false);
@@ -32,7 +38,9 @@ public class FragmentECG extends Fragment{
         start = (Button)view.findViewById(R.id.start);
         pause = (Button)view.findViewById(R.id.pause);
         sensorField = (TextView)view.findViewById(R.id.ecg_rtor_value);
-        myGraph = new RealTimeGraph(view);
+        myGraph = new RealTimeGraphECG(view);
+
+        threadFlag = false;
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +49,7 @@ public class FragmentECG extends Fragment{
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readecg2);
                 start.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
+                threadFlag = true;
                 realTimeStart();
             }
         });
@@ -52,6 +61,7 @@ public class FragmentECG extends Fragment{
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_stop);
                 start.setVisibility(View.VISIBLE);
                 pause.setVisibility(View.GONE);
+                threadFlag = false;
                 realTimeThread.interrupt();
             }
         });
@@ -89,9 +99,9 @@ public class FragmentECG extends Fragment{
         realTimeThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(threadFlag){
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

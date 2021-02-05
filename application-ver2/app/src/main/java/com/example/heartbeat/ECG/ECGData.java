@@ -1,4 +1,4 @@
-package com.example.heartbeat.data;
+package com.example.heartbeat.ECG;
 
 public class ECGData {
     private byte[] packet;
@@ -10,8 +10,14 @@ public class ECGData {
     private int ecg3;
     private int ecg4;
 
+    public ECGData(){
+        this.RtoR = 0;
+        this.RtoRBpm = 0;
+    }
+
     public void setPacket(byte[] packet) {
         this.packet = packet;
+
         processData();
     }
 
@@ -31,11 +37,11 @@ public class ECGData {
         return this.count;
     }
 
-    public double getRtoR(){
+    public int getRtoR(){
         return this.RtoR;
     }
 
-    public double getRtoRBpm() {
+    public int getRtoRBpm() {
         return this.RtoRBpm;
     }
 
@@ -51,11 +57,17 @@ public class ECGData {
         tmp = (dataPacket[2] & 0xff) + ((dataPacket[3] & 0x3f) << 8);
         if(tmp != 0)this.RtoR = tmp;
 
-        tmp = 0;
         tmp = ((dataPacket[3] & 0xc0) >> 6) + ((dataPacket[4] & 0x3f) << 2);
         if(tmp != 0)this.RtoRBpm = tmp;
 
+        //this.RtoR = (dataPacket[2] & 0xff) + ((dataPacket[3] & 0x3f) << 8);
+        //this.RtoRBpm = ((dataPacket[3] & 0xc0) >> 6) + ((dataPacket[4] & 0x3f) << 2);
+
         this.ecg1 = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
+        //tmp = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x1f) << 18);
+        //if((dataPacket[7] & 0x20) != 0)this.ecg1 = - tmp;
+        //else this.ecg1 = tmp;
+
         this.ecg2 = 1;
         this.ecg3 = 1;
         this.ecg4 = 1;
