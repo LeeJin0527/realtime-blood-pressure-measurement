@@ -68,9 +68,11 @@ public class ECGData {
         //if((dataPacket[7] & 0x20) != 0)this.ecg1 = - tmp;
         //else this.ecg1 = tmp;
 
-        this.ecg2 = 1;
-        this.ecg3 = 1;
-        this.ecg4 = 1;
+        this.ecg2 = ((dataPacket[7] & 0xe0) >> 5) + ((dataPacket[8] & 0xff) <<3) + ((dataPacket[9] & 0xff) << 11) + ((dataPacket[10] & 0x1f) << 19);
+        this.ecg3 = ((dataPacket[10] & 0xe0) >> 5) + ((dataPacket[11] & 0xff) <<3) + ((dataPacket[12] & 0xff) << 11) + ((dataPacket[13] & 0x1f) << 19);
+        this.ecg4 = ((dataPacket[13] & 0xe0) >> 5) + ((dataPacket[14] & 0xff) <<3) + ((dataPacket[15] & 0xff) << 11) + ((dataPacket[16] & 0x1f) << 19);
+
+        this.ecg1 = this.ecg1 | this.ecg2 | this.ecg3 | this.ecg4;
     }
 
 }

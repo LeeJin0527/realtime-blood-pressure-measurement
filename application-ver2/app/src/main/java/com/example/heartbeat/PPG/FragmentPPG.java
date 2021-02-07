@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.example.heartbeat.Command;
 import com.example.heartbeat.MenuActivity;
 import com.example.heartbeat.R;
-import com.example.heartbeat.RealTimeGraph;
 
 public class FragmentPPG extends Fragment{
     Button start;
@@ -98,14 +97,14 @@ public class FragmentPPG extends Fragment{
             public void run() {
                 while(threadFlag){
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(120);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                myGraph.addEntry(((MenuActivity) activity).valueForGraph);
+                                myGraph.addEntry( ((MenuActivity) activity).ppgData.getGrnCnt(), ((MenuActivity) activity).ppgData.getGrn2Cnt());
                         }
                     });
                 }

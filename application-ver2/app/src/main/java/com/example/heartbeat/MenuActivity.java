@@ -67,9 +67,9 @@ public class MenuActivity extends AppCompatActivity{
     private TextView ppgField;
     private TextView ppgConfidenceField;
 
-    private TempData tempData;
-    private ECGData ecgData;
-    private PPGData ppgData;
+    public TempData tempData;
+    public ECGData ecgData;
+    public PPGData ppgData;
 
     private long lastTimeBackPressed;
 
@@ -298,8 +298,6 @@ public void process_data(byte[] data){
             valueForGraph = ecgData.getEcg1() * 0.0001;
             ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
             ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
-            //ecgCountField.setText(String.valueOf(ecgData.getCount()));
-            //ecg1Field.setText(String.valueOf(ecgData.getEcg1()));
         }
         else if(mode.equals("ppg")){
             ppgData.setPacket(data);

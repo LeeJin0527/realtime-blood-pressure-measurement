@@ -46,15 +46,11 @@ public class RealTimeGraphTemp {
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
 
-        minX = (float) 20.0;
-        maxX = (float) 37.0;
 
         chart.getAxisLeft().setDrawLabels(true);
         chart.getAxisRight().setDrawLabels(false);
         chart.getXAxis().setDrawLabels(false);
         chart.getXAxis().setDrawGridLines(false);
-        chart.getAxisLeft().setAxisMaximum(maxX);
-        chart.getAxisLeft().setAxisMinimum(minX);
         chart.getDescription().setEnabled(false);
 
         Paint pain = chart.getRenderer().getPaintRender();

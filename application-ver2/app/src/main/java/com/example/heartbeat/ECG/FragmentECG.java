@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.example.heartbeat.Command;
 import com.example.heartbeat.MenuActivity;
 import com.example.heartbeat.R;
-import com.example.heartbeat.RealTimeGraph;
 
 public class FragmentECG extends Fragment{
     Button start;

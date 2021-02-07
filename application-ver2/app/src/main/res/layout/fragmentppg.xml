@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="230dp"
         android:layout_marginBottom="20dp"
+        android:background="@drawable/shadow"
         >
 
         <com.github.mikephil.charting.charts.LineChart
@@ -29,29 +30,24 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
-        <Button
+        <android.widget.Button
             android:id="@+id/start"
-            android:layout_width="170dp"
-            android:layout_height="50dp"
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="25dp"
             android:textSelectHandle="@anim/fragment_fade_exit"
-            android:textColor="#FFFFFF"
-            android:shadowColor="#000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
+            android:background="@drawable/transparent_bg_bordered_button"
             android:text="측정하기"
-            android:background="@drawable/button_shape"
-
             />
-        <Button
+        <android.widget.Button
             android:id="@+id/pause"
             android:layout_width="500px"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="25dp"
             android:textSelectHandle="@anim/fragment_fade_exit"
+            android:background="@drawable/transparent_bg_bordered_button"
             android:visibility="gone"
             android:text="일시정지" />
     </LinearLayout>

@@ -12,6 +12,7 @@ import java.math.*;
 
 import com.example.heartbeat.R;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -19,6 +20,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 public class RealTimeGraphPPG {
+    private static final String TAG = RealTimeGraphPPG.class.getSimpleName();
     private LineChart chart;
     private float minX;
     private float maxX;
@@ -30,62 +32,79 @@ public class RealTimeGraphPPG {
 
     private void creatGraph(View view){
         chart = (LineChart)view.findViewById(R.id.LineChart);
-        chart.setDrawGridBackground(true);
+        chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.WHITE);
-        chart.setGridBackgroundColor(Color.WHITE);
-
 
         chart.getXAxis().setEnabled(false);
-
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setEnabled(true);
-        //leftAxis.setTextColor(getResources().getColor(R.color.colorGrid));
-        leftAxis.setDrawGridLines(true);
-        //leftAxis.setGridColor(getResources().getColor(R.color.colorGrid));
-
-
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setEnabled(false);
-
-
-
-        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisLeft().setEnabled(false);
         chart.getAxisRight().setDrawLabels(false);
         chart.getXAxis().setDrawLabels(false);
         chart.getXAxis().setDrawGridLines(false);
+        chart.getXAxis().setEnabled(false);
+        chart.getAxisRight().setEnabled(false);
 
-
-        chart.setVisibleXRangeMaximum(75);
+        chart.setVisibleXRangeMaximum(20);
         chart.getDescription().setEnabled(false);
 
-        Paint pain = chart.getRenderer().getPaintRender();
-        count = 0;
-
         chart.invalidate();
-
-
     }
-    public void addEntry(double num) {
+    public void addEntry(double num1, double num2) {
         LineData data = chart.getData();
-        chart.getAxisLeft().setAxisMaximum((float)num + 5000);
-        chart.getAxisLeft().setAxisMinimum((float)num - 5000);
+        float min;
+        float max;
+        float diff;
+
+        Log.i(TAG, "ch1 = " + String.valueOf(num1));
+        Log.i(TAG, "ch2 = " + String.valueOf(num2));
+
+        if(num1 > num2){
+            max = (float) num1;
+            min = (float) num2;
+            diff = (max - min)*0.01f;
+            num1 = num2 + diff;
+            max = (float) num1;
+
+        }
+        else{
+            max = (float) num2;
+            min = (float) num1;
+            diff = (max - min)*0.01f;
+            num2 = num1 + diff;
+            max = (float) num2;
+        }
+
+
+
+        chart.getAxisLeft().setAxisMaximum(max + 1000);
+        chart.getAxisLeft().setAxisMinimum(min - 1000);
+
+
 
         if (data == null) {
             data = new LineData();
             chart.setData(data);
+
+
         }
+        LineDataSet set3 = (LineDataSet) data.getDataSetByIndex(0);
+        LineDataSet set4 = (LineDataSet) data.getDataSetByIndex(1);
 
         ILineDataSet set = data.getDataSetByIndex(0);
         // set.addEntry(...); // can be called as well
+        ILineDataSet set2 = data.getDataSetByIndex(1);
 
         if (set == null) {
             set = createSet();
             data.addDataSet(set);
+
+            set2 = createSet2();
+            data.addDataSet(set2);
         }
 
 
-
-        data.addEntry(new Entry((float)set.getEntryCount(), (float)num), 0);
+        data.addEntry(new Entry((float)set.getEntryCount(), (float)num1), 0);
+        data.addEntry(new Entry((float)set2.getEntryCount(), (float)num2), 1);
 
         data.notifyDataChanged();
 
@@ -94,9 +113,9 @@ public class RealTimeGraphPPG {
         //count++;
         //if(count >= 75)yAxiSetting();
 
-        chart.setVisibleXRangeMaximum(75);
+        chart.setVisibleXRangeMaximum(20);
         // this automatically refreshes the chart (calls invalidate())
-        chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+        chart.moveViewTo(data.getEntryCount(), 100f, YAxis.AxisDependency.LEFT);
 
     }
 
@@ -106,8 +125,20 @@ public class RealTimeGraphPPG {
         set.setDrawValues(false);
         set.setMode(LineDataSet.Mode.LINEAR);
         set.setDrawCircles(false);
-        set.setHighLightColor(Color.RED);
-        set.setColor(Color.RED);
+        set.setHighLightColor(Color.GREEN);
+        set.setColor(Color.GREEN);
+
+        return set;
+    }
+
+    private LineDataSet createSet2() {
+        LineDataSet set = new LineDataSet(null, "ch2");
+        set.setLineWidth(1f);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.LINEAR);
+        set.setDrawCircles(false);
+        set.setHighLightColor(Color.BLUE);
+        set.setColor(Color.BLUE);
 
         return set;
     }

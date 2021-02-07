@@ -29,34 +29,19 @@ public class RealTimeGraphECG {
 
     private void creatGraph(View view){
         chart = (LineChart)view.findViewById(R.id.LineChart);
-        chart.setDrawGridBackground(true);
+        chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.WHITE);
-        chart.setGridBackgroundColor(Color.WHITE);
-
 
         chart.getXAxis().setEnabled(false);
-
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setEnabled(true);
-        //leftAxis.setTextColor(getResources().getColor(R.color.colorGrid));
-        leftAxis.setDrawGridLines(true);
-        //leftAxis.setGridColor(getResources().getColor(R.color.colorGrid));
-
-
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setEnabled(false);
-
-
-
-        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getAxisLeft().setEnabled(false);
         chart.getAxisRight().setDrawLabels(false);
         chart.getXAxis().setDrawLabels(false);
         chart.getXAxis().setDrawGridLines(false);
-
-
+        chart.getXAxis().setEnabled(false);
+        chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
 
-        Paint pain = chart.getRenderer().getPaintRender();
 
         chart.invalidate();
 
@@ -90,7 +75,7 @@ public class RealTimeGraphECG {
         // let the chart know it's data has changed
         chart.notifyDataSetChanged();
 
-        chart.setVisibleXRangeMaximum(75);
+        chart.setVisibleXRangeMaximum(35);
         // this automatically refreshes the chart (calls invalidate())
         chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 

@@ -69,11 +69,15 @@
     <ExpandableListView
         android:id="@+id/gatt_services_list"
         android:layout_width="match_parent"
-        android:layout_height="175dp">
+        android:layout_height="wrap_content">
 
 
     </ExpandableListView>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -149,5 +153,6 @@
             android:layout_height="wrap_content"
             android:text="측정중"
             android:visibility="visible" />
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

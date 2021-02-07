@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Realtime_Blood_pressure_measurement" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Realtime_Blood_pressure_measurement/firmware/MAXREFDES101_SOURCE" vcs="hg4idea" />
     <mapping directory="$PROJECT_DIR$/Realtime_Blood_pressure_measurement/firmware/MAXREFDES101_SOURCE/Drivers/Adafruit_FeatherOLED" vcs="hg4idea" />
