@@ -90,7 +90,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-        }//이게 맞는지는 모르겟지만 추가해봄.
+        }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
@@ -105,7 +105,6 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            //Log.i(TAG, "READ콜백함수 트리거");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }
@@ -121,7 +120,7 @@ public class BluetoothLeService extends Service {
             for(final byte tmp : original){
                 sb.append(String.format("%02x", tmp&0xff));
             }
-            Log.i(TAG, "변환 : "+ sb.toString());
+            //Log.i(TAG, "변환 : "+ sb.toString());
         }
     };
 

@@ -3,6 +3,7 @@ package com.example.heartbeat.ECG;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.example.heartbeat.R;
 public class FragmentECG extends Fragment{
     Button start;
     Button pause;
+    private int count = -1;
 
     Command MyCmd;
     FrameLayout frameLayout;
@@ -107,7 +109,16 @@ public class FragmentECG extends Fragment{
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            myGraph.addEntry(((MenuActivity)activity).valueForGraph);
+                            int tmp_count;
+                            tmp_count = ((MenuActivity)activity).ecgData.getCount();
+                            //Log.i("count : ", Integer.toString(tmp));
+
+                            //if((tmp%35) == 0)myGraph.resetMaxandMin();
+                            if(count != tmp_count) {
+                                Log.i("그래프 그리기 메서드" , "호출!");
+                                count = tmp_count;
+                                myGraph.addEntry(((MenuActivity) activity).valueForGraph);
+                            }
                         }
                     });
                 }

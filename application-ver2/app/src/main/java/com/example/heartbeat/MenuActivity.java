@@ -295,7 +295,7 @@ public void process_data(byte[] data){
         }
         else if(mode.equals("ecg")){
             ecgData.setPacket(data);
-            valueForGraph = ecgData.getEcg1() * 0.0001;
+            valueForGraph = ecgData.getEcg1();
             ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
             ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
         }

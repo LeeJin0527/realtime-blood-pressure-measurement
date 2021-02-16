@@ -1,5 +1,7 @@
 package com.example.heartbeat.ECG;
 
+import android.util.Log;
+
 public class ECGData {
     private byte[] packet;
     private int count;
@@ -9,6 +11,8 @@ public class ECGData {
     private int ecg2;
     private int ecg3;
     private int ecg4;
+    private int eTag;
+    private int pTag;
 
     public ECGData(){
         this.RtoR = 0;
@@ -51,8 +55,21 @@ public class ECGData {
 
     public void processData(){
         int tmp = 0;
+        int total_ecg = 0;
         byte[] dataPacket = this.packet;
         this.count = dataPacket[1] & 0xff;
+
+        this.ecg1 = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
+        this.ecg2 = ((dataPacket[7] & 0xc0) >> 6) + ((dataPacket[8] & 0xff) << 2) + ((dataPacket[9] & 0xff) << 10) + ((dataPacket[10] & 0x3f) << 18);
+        this.ecg3 = ((dataPacket[10] & 0xc0) >> 6) + ((dataPacket[11] & 0xff) << 2) + ((dataPacket[12] & 0xff) << 10) + ((dataPacket[13] & 0x3f) << 18);
+        this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((dataPacket[15] & 0xff) << 10) + ((dataPacket[16] & 0x3f) << 18);
+
+        total_ecg = this.ecg1 | this.ecg2 | this.ecg3 | this.ecg4;
+        this.eTag = (this.ecg1 & 0x38) >> 3 ;
+        this.pTag = this.ecg1 & 0x07;
+        //Log.i("eTag : ", Integer.toString(this.eTag));
+        //Log.i("pTag : ", Integer.toString(this.pTag));
+        int tmp_data;
 
         tmp = (dataPacket[2] & 0xff) + ((dataPacket[3] & 0x3f) << 8);
         if(tmp != 0)this.RtoR = tmp;
@@ -60,19 +77,25 @@ public class ECGData {
         tmp = ((dataPacket[3] & 0xc0) >> 6) + ((dataPacket[4] & 0x3f) << 2);
         if(tmp != 0)this.RtoRBpm = tmp;
 
-        //this.RtoR = (dataPacket[2] & 0xff) + ((dataPacket[3] & 0x3f) << 8);
-        //this.RtoRBpm = ((dataPacket[3] & 0xc0) >> 6) + ((dataPacket[4] & 0x3f) << 2);
 
-        this.ecg1 = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
-        //tmp = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x1f) << 18);
-        //if((dataPacket[7] & 0x20) != 0)this.ecg1 = - tmp;
-        //else this.ecg1 = tmp;
+        tmp_data = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
+        //tmp_data = this.ecg1;
+        tmp_data = total_ecg;
 
-        this.ecg2 = ((dataPacket[7] & 0xe0) >> 5) + ((dataPacket[8] & 0xff) <<3) + ((dataPacket[9] & 0xff) << 11) + ((dataPacket[10] & 0x1f) << 19);
-        this.ecg3 = ((dataPacket[10] & 0xe0) >> 5) + ((dataPacket[11] & 0xff) <<3) + ((dataPacket[12] & 0xff) << 11) + ((dataPacket[13] & 0x1f) << 19);
-        this.ecg4 = ((dataPacket[13] & 0xe0) >> 5) + ((dataPacket[14] & 0xff) <<3) + ((dataPacket[15] & 0xff) << 11) + ((dataPacket[16] & 0x1f) << 19);
 
-        this.ecg1 = this.ecg1 | this.ecg2 | this.ecg3 | this.ecg4;
+        tmp_data = tmp_data >> 6;
+        //Log.i("전체 데이터 : ", Integer.toBinaryString(tmp_data));
+
+        if((tmp_data & 0x20000) != 0x0){
+            tmp_data = tmp_data ^ 0x3ffff;
+            tmp_data = tmp_data + 0x01;
+            tmp_data = -tmp_data;
+        }
+        this.ecg1 = tmp_data;
+        Log.i("계산 : ", Integer.toString(this.ecg1));
+
+
+
     }
 
 }

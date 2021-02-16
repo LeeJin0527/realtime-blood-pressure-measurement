@@ -50,7 +50,8 @@ public class RealTimeGraphECG {
     public void addEntry(double num) {
         LineData data = chart.getData();
 
-
+        chart.getAxisLeft().setAxisMaximum(1000f);
+        chart.getAxisLeft().setAxisMinimum(-1000f);
 
 
         if (data == null) {
@@ -77,8 +78,16 @@ public class RealTimeGraphECG {
 
         chart.setVisibleXRangeMaximum(35);
         // this automatically refreshes the chart (calls invalidate())
-        chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
+        //chart.moveViewTo(data.getEntryCount(), 100f, YAxis.AxisDependency.LEFT);
+        chart.moveViewToX(data.getEntryCount());
+        //chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.RIGHT);
+        //chart.invalidate();
 
+    }
+    public void resetMaxandMin(){
+        Log.i("호출 : ", "호출됨!");
+        chart.getAxisLeft().resetAxisMaximum();
+        chart.getAxisLeft().resetAxisMinimum();
     }
 
     private LineDataSet createSet() {
@@ -88,7 +97,7 @@ public class RealTimeGraphECG {
         set.setLineWidth(1f);
         set.setDrawValues(false);
         set.setMode(LineDataSet.Mode.LINEAR);
-        set.setDrawCircles(false);
+        set.setDrawCircles(true);
         set.setHighLightColor(Color.RED);
         set.setColor(Color.RED);
 
