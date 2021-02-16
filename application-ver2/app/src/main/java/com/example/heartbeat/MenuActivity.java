@@ -66,6 +66,7 @@ public class MenuActivity extends AppCompatActivity{
 
     private TextView ppgField;
     private TextView ppgConfidenceField;
+    private TextView ppgActivityField;
 
     public TempData tempData;
     public ECGData ecgData;
@@ -304,6 +305,27 @@ public void process_data(byte[] data){
             valueForGraph = ppgData.getGrnCnt();
             ppgField.setText(String.valueOf(ppgData.getHeartRate()));
             ppgConfidenceField.setText(String.valueOf(ppgData.getHeartRateConfidence()) + "%");
+
+            if(ppgData.getPpgActivity() == 0){
+                ppgActivityField.setText("rest");
+            }
+            if(ppgData.getPpgActivity() == 1){
+                ppgActivityField.setText("Non-rhythmic activity");
+            }
+            if(ppgData.getPpgActivity() == 2){
+                ppgActivityField.setText("walking");
+            }
+            if(ppgData.getPpgActivity() == 3){
+                ppgActivityField.setText("running");
+            }
+            if(ppgData.getPpgActivity() == 4){
+                ppgActivityField.setText("biking");
+            }
+            if(ppgData.getPpgActivity() == 5){
+                ppgActivityField.setText("rhythmic activity");
+            }
+
+
         }else if(mode.equals("stop")){
             return;
         }
@@ -320,6 +342,7 @@ public void setViewField(View view, String modeConfig){
     if(mode.equals("ppg")){
         ppgField = (TextView)view.findViewById(R.id.ppg_sensor_value);
         ppgConfidenceField = (TextView)view.findViewById(R.id.ppg_sensor_confidence_value);
+        ppgActivityField = (TextView)view.findViewById(R.id.ppg_sensor_activity_value);
     }
 
     if(mode.equals("ecg")){

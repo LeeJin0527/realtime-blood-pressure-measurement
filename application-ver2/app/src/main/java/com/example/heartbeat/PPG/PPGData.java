@@ -1,5 +1,7 @@
 package com.example.heartbeat.PPG;
 
+import android.util.Log;
+
 public class PPGData {
     private byte[] packet;
     private int count;
@@ -10,6 +12,8 @@ public class PPGData {
     private int heartRateConfidence;
     private int grnCnt;
     private int grn2Cnt;
+    private int ppgActivity;
+
 
     public void setPacket(byte[] packet) {
         this.packet = packet;
@@ -84,6 +88,8 @@ public class PPGData {
 
     public int getGrn2Cnt(){return this.grn2Cnt;}
 
+    public int getPpgActivity(){return this.ppgActivity;}
+
     private void processData(){
         byte[] dataPacket = this.packet;
 
@@ -91,6 +97,7 @@ public class PPGData {
         this.heartRateConfidence = ((dataPacket[14] & 0xc0) >> 6) + ((dataPacket[15] & 0x3f) << 2);
         this.grnCnt = (dataPacket[3] & 0xff ) + ((dataPacket[4] & 0xff )<<8) + ((dataPacket[5] & 0x0f)<<16);
         this.grn2Cnt = (dataPacket[5] & 0xf0) + ((dataPacket[6] & 0xff)<<4) + ((dataPacket[7] & 0xff)<<12);
-
+        this.ppgActivity = ((dataPacket[17] & 0xfe) >> 1) + ((dataPacket[18] & 0x01) << 7);
+        Log.i("activity 값 : ", Integer.toString(this.ppgActivity));
     }
 }

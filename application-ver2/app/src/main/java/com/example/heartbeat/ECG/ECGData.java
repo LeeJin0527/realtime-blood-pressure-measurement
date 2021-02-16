@@ -78,7 +78,7 @@ public class ECGData {
         if(tmp != 0)this.RtoRBpm = tmp;
 
 
-        tmp_data = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
+        //tmp_data = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
         //tmp_data = this.ecg1;
         tmp_data = total_ecg;
 
