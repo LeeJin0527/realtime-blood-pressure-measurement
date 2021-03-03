@@ -92,7 +92,7 @@ public class PPGData {
 
     private void processData(){
         byte[] dataPacket = this.packet;
-
+        this.count = (dataPacket[1] & 0xff) + ((dataPacket[2] & 0xff)<<8);
         this.heartRate = (((dataPacket[13] & 0xfc) >> 2 )+ ((dataPacket[14] & 0x3f) << 6));
         this.heartRateConfidence = ((dataPacket[14] & 0xc0) >> 6) + ((dataPacket[15] & 0x3f) << 2);
         this.grnCnt = (dataPacket[3] & 0xff ) + ((dataPacket[4] & 0xff )<<8) + ((dataPacket[5] & 0x0f)<<16);

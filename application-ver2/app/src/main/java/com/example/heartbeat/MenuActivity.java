@@ -4,6 +4,7 @@
  **/
 package com.example.heartbeat;
 
+import android.Manifest;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
@@ -21,9 +23,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 
@@ -72,10 +78,13 @@ public class MenuActivity extends AppCompatActivity{
     public ECGData ecgData;
     public PPGData ppgData;
 
-    private long lastTimeBackPressed;
+    public String AppAbsolutePath;
 
     public double valueForGraph = 0;
 
+    private CSVFile tempCsvFile;
+    private CSVFile ppgCsvFile;
+    private CSVFile ecgCSVFile;
 
 
     private boolean mConnected = false;
@@ -119,6 +128,8 @@ public class MenuActivity extends AppCompatActivity{
     };
 
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +146,15 @@ public class MenuActivity extends AppCompatActivity{
         Button tempbtn = (Button)findViewById(R.id.tempbtn);
         Button ecgbtn = (Button)findViewById(R.id.ecgbtn);
         Button ppgbtn = (Button)findViewById(R.id.ppgbtn);
+
+        Log.i("path 확인용", getFilesDir().toString());
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MODE_PRIVATE);//사용자에게 권한 요구
+        AppAbsolutePath = getFilesDir().toString();
+
+        tempCsvFile = new CSVFile("Temp");
+        ppgCsvFile= new CSVFile("PPG");
+        ecgCSVFile = new CSVFile("ECG");
+
 
         // 데이터 핸들링 객체 initialize
         tempData = new TempData();
@@ -225,6 +245,7 @@ public class MenuActivity extends AppCompatActivity{
                     gattService.getCharacteristics();
 
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                Log.i("GATT 확인", gattCharacteristic.getUuid().toString());
                 //notify
                 if(gattCharacteristic.getUuid().toString().equals("00001011-1212-efde-1523-785feabcd123")){
                     notifyCharacteristicObject = gattCharacteristic;
@@ -237,8 +258,12 @@ public class MenuActivity extends AppCompatActivity{
                 }
 
                 //write
-                if(gattCharacteristic.getUuid().toString().equals("00001027-1212-efde-1523-785feabcd123")){
+                //몇몇기기에서 펌웨어단에서 readwrite characteristic 이 변경이 안되는 문제발생
+
+                if(gattCharacteristic.getUuid().toString().equals("00007777-1212-efde-1523-785feabcd123")){
+                //if(gattCharacteristic.getUuid().toString().equals("00001027-1212-efde-1523-785feabcd123")){
                     writeCharacteristicObject = gattCharacteristic;
+                    Log.i("적용됨?", "됏음");
                 }
             }
         }
@@ -292,6 +317,8 @@ public void process_data(byte[] data){
             valueForGraph = tempData.getValue();
             tempField.setText(String.valueOf(tempData.getValue()));
             tempFsField.setText(String.valueOf(((float) tempData.convertCelciustoF())));
+            tempCsvFile.writeTempFile(tempData);
+            //writeTempFile(tempData);
 
         }
         else if(mode.equals("ecg")){
@@ -299,6 +326,7 @@ public void process_data(byte[] data){
             valueForGraph = ecgData.getEcg1();
             ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
             ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
+            ecgCSVFile.writeECGFile(ecgData);
         }
         else if(mode.equals("ppg")){
             ppgData.setPacket(data);
@@ -324,7 +352,7 @@ public void process_data(byte[] data){
             if(ppgData.getPpgActivity() == 5){
                 ppgActivityField.setText("rhythmic activity");
             }
-
+            ppgCsvFile.writePPGFile(ppgData);
 
         }else if(mode.equals("stop")){
             return;
@@ -352,7 +380,6 @@ public void setViewField(View view, String modeConfig){
         //ecg1Field = (TextView)view.findViewById(R.id.ecg1_sensor_value);
     }
 }
-
 
 
 }

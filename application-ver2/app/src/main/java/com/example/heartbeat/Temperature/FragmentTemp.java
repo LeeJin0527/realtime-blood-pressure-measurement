@@ -2,8 +2,11 @@ package com.example.heartbeat.Temperature;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.BoringLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +16,23 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.EnvironmentCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.heartbeat.Command;
 import com.example.heartbeat.MenuActivity;
 import com.example.heartbeat.R;
 import com.example.heartbeat.Temperature.RealTimeGraphTemp;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class FragmentTemp extends Fragment{
     Button start;
@@ -40,6 +54,33 @@ public class FragmentTemp extends Fragment{
         pause = (Button)view.findViewById(R.id.pause);
         sensorField = (TextView)view.findViewById(R.id.temp_sensor_value);
         myGraph = new RealTimeGraphTemp(view);
+
+        //String CSVPath = ((MenuActivity)getActivity()).AppAbsolutePath;
+        String CSVPath = "/Android/data/";
+        String myFile = CSVPath + "test.csv";
+
+/*
+        try {
+            FileWriter fw = new FileWriter(myFile);
+
+            fw.append("count");
+            fw.append(",");
+            fw.append("Temperature");
+            fw.append("\n");
+            fw.flush();
+            fw.close();
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("text/plain");
+            intent.putExtra(intent.EXTRA_TITLE, myFile);
+            startActivityForResult(intent, 1);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+*/
+
+        writeFile();
+        //Log.i("경로", CSVPath);
 
         threadFlag = false;
 
@@ -121,6 +162,26 @@ public class FragmentTemp extends Fragment{
         });
 
         realTimeThread.start();
+    }
+
+    public void writeFile() {
+        String fileTitle = "testcsvfile.csv";
+        File file = new File(Environment.getExternalStorageDirectory(), fileTitle);
+        Log.i("write 디렉토리 확인", Environment.getExternalStorageDirectory().getAbsolutePath().toString());
+
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter writer = new FileWriter(file, false);
+            writer.append("Temperature");
+            writer.append(",");
+            writer.append("count");
+            writer.append("\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
