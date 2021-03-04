@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.heartbeat.CSVFile;
 import com.example.heartbeat.Command;
 import com.example.heartbeat.MenuActivity;
 import com.example.heartbeat.R;
@@ -22,7 +24,7 @@ import com.example.heartbeat.R;
 public class FragmentECG extends Fragment{
     Button start;
     Button pause;
-    private int count = -1;
+
 
     Command MyCmd;
     FrameLayout frameLayout;
@@ -102,23 +104,21 @@ public class FragmentECG extends Fragment{
             public void run() {
                 while(threadFlag){
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(90);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            int tmp_count;
-                            tmp_count = ((MenuActivity)activity).ecgData.getCount();
-                            //Log.i("count : ", Integer.toString(tmp));
+                                ECGData ecgData = ((MenuActivity)activity).ecgData;
+                                myGraph.addEntry(ecgData.getEcg1());
+                                myGraph.addEntry(ecgData.getEcg2());
+                                myGraph.addEntry(ecgData.getEcg3());
+                                myGraph.addEntry(ecgData.getEcg4());
+                                //myGraph.addEntry(((MenuActivity) activity).valueForGraph);
 
-                            //if((tmp%35) == 0)myGraph.resetMaxandMin();
-                            if(count != tmp_count) {
-                                Log.i("그래프 그리기 메서드" , "호출!");
-                                count = tmp_count;
-                                myGraph.addEntry(((MenuActivity) activity).valueForGraph);
-                            }
+
                         }
                     });
                 }

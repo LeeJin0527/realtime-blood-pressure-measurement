@@ -36,12 +36,13 @@ public class RealTimeGraphPPG {
         chart.setBackgroundColor(Color.WHITE);
 
         chart.getXAxis().setEnabled(false);
-        chart.getAxisLeft().setDrawLabels(false);
-        chart.getAxisLeft().setEnabled(false);
+        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisLeft().setEnabled(true);
         chart.getAxisRight().setDrawLabels(false);
-        chart.getXAxis().setDrawLabels(false);
+        chart.getXAxis().setDrawLabels(true);
         chart.getXAxis().setDrawGridLines(false);
-        chart.getXAxis().setEnabled(false);
+        chart.getXAxis().setEnabled(true);
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         chart.getAxisRight().setEnabled(false);
 
         chart.setVisibleXRangeMaximum(20);
@@ -76,8 +77,8 @@ public class RealTimeGraphPPG {
 
 
 
-        chart.getAxisLeft().setAxisMaximum(max + 1000);
-        chart.getAxisLeft().setAxisMinimum(min - 1000);
+        //chart.getAxisLeft().setAxisMaximum(max + 1000);
+        //chart.getAxisLeft().setAxisMinimum(min - 1000);
 
 
 
@@ -113,9 +114,9 @@ public class RealTimeGraphPPG {
         //count++;
         //if(count >= 75)yAxiSetting();
 
-        chart.setVisibleXRangeMaximum(20);
+        chart.setVisibleXRangeMaximum(120);
         // this automatically refreshes the chart (calls invalidate())
-        chart.moveViewTo(data.getEntryCount(), 100f, YAxis.AxisDependency.LEFT);
+        chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 
     }
 

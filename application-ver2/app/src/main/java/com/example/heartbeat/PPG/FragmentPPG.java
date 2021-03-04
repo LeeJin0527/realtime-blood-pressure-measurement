@@ -29,6 +29,8 @@ public class FragmentPPG extends Fragment{
     Thread realTimeThread;
     Activity activity;
     Boolean threadFlag;
+    Boolean initialStartFlag;
+    //ppg의 경우, 초기에 일정 인터벌 쉬었다가 그래프에 그려줘야 하는데, runOnUiThread를 우아하게 멈출 방법이 아직 생각이 안나서 임시방편으로 flag와 if문으로 인터벌 쉬도록 구현함
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragmentppg, container, false);
@@ -46,9 +48,11 @@ public class FragmentPPG extends Fragment{
             public void onClick(View v){
                 ((MenuActivity)getActivity()).setViewField(view, "ppg");
                 ((MenuActivity)getActivity()).sendStrCmd(MyCmd.str_readppg0);
+
                 start.setVisibility(View.GONE);
                 pause.setVisibility(View.VISIBLE);
                 threadFlag = true;
+                initialStartFlag = true;
                 realTimeStart();
 
 
@@ -93,11 +97,16 @@ public class FragmentPPG extends Fragment{
 
     public void realTimeStart(){
         realTimeThread = new Thread(new Runnable() {
+            
             @Override
             public void run() {
                 while(threadFlag){
                     try {
-                        Thread.sleep(120);
+                        if(initialStartFlag){
+                            Thread.sleep(10000);
+                            initialStartFlag = false;
+                        }
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

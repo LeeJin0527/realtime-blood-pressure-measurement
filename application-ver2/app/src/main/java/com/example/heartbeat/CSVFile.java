@@ -18,7 +18,7 @@ public class CSVFile {
         this.fileTitle = filename + ".csv";
         File file = new File(Environment.getExternalStorageDirectory(), fileTitle);
         try{
-            FileWriter writer = new FileWriter(file, true);
+            FileWriter writer = new FileWriter(file, false);
             if(!file.exists()) {
                 file.createNewFile();
             }
@@ -35,16 +35,28 @@ public class CSVFile {
                 writer.append("grnCnt");
                 writer.append(",");
                 writer.append("grn2Cnt");
+                writer.append(",");
+                writer.append("hr");
                 writer.append("\n");
             }
             if(filename.equals("ECG")){
                 writer.append("Count");
                 writer.append(",");
-                writer.append("RAW ECG");
+                writer.append("RAW ECG1");
                 writer.append(",");
-                writer.append("ETAG");
+                writer.append("RAW ECG2");
                 writer.append(",");
-                writer.append("PTAG");
+                writer.append("RAW ECG3");
+                writer.append(",");
+                writer.append("RAW ECG4");
+                writer.append(",");
+                writer.append("eTAg1");
+                writer.append(",");
+                writer.append("eTAG2");
+                writer.append(",");
+                writer.append("eTAG3");
+                writer.append(",");
+                writer.append("eTAG4");
                 writer.append("\n");
             }
 
@@ -87,6 +99,8 @@ public class CSVFile {
             writer.append(Double.toString(ppgData.getGrnCnt()));
             writer.append(",");
             writer.append(Double.toString(ppgData.getGrn2Cnt()));
+            writer.append(",");
+            writer.append(Integer.toString(ppgData.getHeartRate()));
             writer.append("\n");
             writer.close();
 
@@ -106,6 +120,20 @@ public class CSVFile {
             writer.append(Integer.toString(ecgData.getCount()));
             writer.append(",");
             writer.append(Integer.toString(ecgData.getEcg1()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg2()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg3()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg4()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg1eTag()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg2eTag()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg3eTag()));
+            writer.append(",");
+            writer.append(Integer.toString(ecgData.getEcg4eTag()));
             writer.append("\n");
             writer.close();
 

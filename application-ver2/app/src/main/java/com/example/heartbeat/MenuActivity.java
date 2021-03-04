@@ -84,7 +84,9 @@ public class MenuActivity extends AppCompatActivity{
 
     private CSVFile tempCsvFile;
     private CSVFile ppgCsvFile;
-    private CSVFile ecgCSVFile;
+    public CSVFile ecgCSVFile;
+
+
 
 
     private boolean mConnected = false;
@@ -121,12 +123,31 @@ public class MenuActivity extends AppCompatActivity{
                 setupGattCharacteristic(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 //Log.i(TAG, intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                String tmp_data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
+                byte[] hexaData = hexaStringToByteArray(tmp_data);
+                StringBuilder sb = new StringBuilder();
+                for(final byte tmp : hexaData){
+                    sb.append(String.format("%02x", tmp&0xff));
+                }
+                //Log.i("원본", tmp_data);
+                Log.i("변환", sb.toString());
 
-                process_data(notifyCharacteristicObject.getValue());
+
+                process_data(hexaData);
             }
         }
     };
 
+    public byte[] hexaStringToByteArray(String hexaString){
+        int length = hexaString.length();
+        byte [] data = new byte[length/2];
+
+        for(int i = 0; i  < length; i += 2){
+            data[i / 2] = (byte) ((Character.digit(hexaString.charAt(i), 16) << 4)
+                    + Character.digit(hexaString.charAt(i+1), 16));
+        }
+        return data;
+    }
 
 
 
@@ -257,11 +278,7 @@ public class MenuActivity extends AppCompatActivity{
                     readCharacteristicObject = gattCharacteristic;
                 }
 
-                //write
-                //몇몇기기에서 펌웨어단에서 readwrite characteristic 이 변경이 안되는 문제발생
-
-                if(gattCharacteristic.getUuid().toString().equals("00007777-1212-efde-1523-785feabcd123")){
-                //if(gattCharacteristic.getUuid().toString().equals("00001027-1212-efde-1523-785feabcd123")){
+                if(gattCharacteristic.getUuid().toString().equals("00001027-1212-efde-1523-785feabcd123") || gattCharacteristic.getUuid().toString().equals("00007777-1212-efde-1523-785feabcd123")){
                     writeCharacteristicObject = gattCharacteristic;
                     Log.i("적용됨?", "됏음");
                 }
@@ -318,12 +335,11 @@ public void process_data(byte[] data){
             tempField.setText(String.valueOf(tempData.getValue()));
             tempFsField.setText(String.valueOf(((float) tempData.convertCelciustoF())));
             tempCsvFile.writeTempFile(tempData);
-            //writeTempFile(tempData);
 
         }
         else if(mode.equals("ecg")){
             ecgData.setPacket(data);
-            valueForGraph = ecgData.getEcg1();
+            valueForGraph = ecgData.getTest_value_graph();
             ecgRtoRField.setText(String.valueOf(ecgData.getRtoR()));
             ecgRtoRBpmField.setText(String.valueOf(ecgData.getRtoRBpm()));
             ecgCSVFile.writeECGFile(ecgData);
@@ -376,8 +392,6 @@ public void setViewField(View view, String modeConfig){
     if(mode.equals("ecg")){
         ecgRtoRField = (TextView)view.findViewById(R.id.ecg_rtor_value);
         ecgRtoRBpmField = (TextView)view.findViewById(R.id.ecg_rtorbpm_value);
-        //ecgCountField = (TextView)view.findViewById(R.id.ecg_count_value);
-        //ecg1Field = (TextView)view.findViewById(R.id.ecg1_sensor_value);
     }
 }
 

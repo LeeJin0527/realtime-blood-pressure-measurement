@@ -12,6 +12,7 @@ import java.math.*;
 
 import com.example.heartbeat.R;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -32,13 +33,13 @@ public class RealTimeGraphECG {
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.WHITE);
 
-        chart.getXAxis().setEnabled(false);
-        chart.getAxisLeft().setDrawLabels(false);
-        chart.getAxisLeft().setEnabled(false);
+        chart.getAxisLeft().setDrawLabels(true);
+        chart.getAxisLeft().setEnabled(true);
         chart.getAxisRight().setDrawLabels(false);
-        chart.getXAxis().setDrawLabels(false);
+        chart.getXAxis().setDrawLabels(true);
         chart.getXAxis().setDrawGridLines(false);
-        chart.getXAxis().setEnabled(false);
+        chart.getXAxis().setEnabled(true);
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         chart.getAxisRight().setEnabled(false);
         chart.getDescription().setEnabled(false);
 
@@ -50,8 +51,8 @@ public class RealTimeGraphECG {
     public void addEntry(double num) {
         LineData data = chart.getData();
 
-        chart.getAxisLeft().setAxisMaximum(1000f);
-        chart.getAxisLeft().setAxisMinimum(-1000f);
+        chart.getAxisLeft().setAxisMaximum(2000f);
+        chart.getAxisLeft().setAxisMinimum(-2000f);
 
 
         if (data == null) {
@@ -76,10 +77,10 @@ public class RealTimeGraphECG {
         // let the chart know it's data has changed
         chart.notifyDataSetChanged();
 
-        chart.setVisibleXRangeMaximum(35);
+        chart.setVisibleXRangeMaximum(130);
         // this automatically refreshes the chart (calls invalidate())
-        //chart.moveViewTo(data.getEntryCount(), 100f, YAxis.AxisDependency.LEFT);
-        chart.moveViewToX(data.getEntryCount());
+        chart.moveViewTo(data.getEntryCount(), 100f, YAxis.AxisDependency.LEFT);
+        //chart.moveViewToX(data.getEntryCount());
         //chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.RIGHT);
         //chart.invalidate();
 
