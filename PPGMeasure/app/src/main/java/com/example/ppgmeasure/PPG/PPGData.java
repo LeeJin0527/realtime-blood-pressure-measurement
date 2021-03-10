@@ -2,6 +2,8 @@ package com.example.ppgmeasure.PPG;
 
 import android.util.Log;
 
+import uk.me.berndporr.iirj.Butterworth;
+
 public class PPGData {
     private byte[] packet;
     private int count;
@@ -10,8 +12,8 @@ public class PPGData {
     private int z;
     private int heartRate;
     private int heartRateConfidence;
-    private int grnCnt;
-    private int grn2Cnt;
+    private double grnCnt;
+    private double grn2Cnt;
     private int ppgActivity;
 
 
@@ -84,11 +86,24 @@ public class PPGData {
         return this.heartRateConfidence;
     }
 
-    public int getGrnCnt(){return this.grnCnt;}
+    public double getGrnCnt(){return this.grnCnt;}
 
-    public int getGrn2Cnt(){return this.grn2Cnt;}
+    public double getGrn2Cnt(){return this.grn2Cnt;}
 
     public int getPpgActivity(){return this.ppgActivity;}
+
+    private void applyFilter(){
+        int dt = 25;
+        int order = 5;
+        double fs = 1/(double)25.0;
+        double cutoff = 1/(double)(dt*24);
+        int fb = 3;
+
+        Butterworth butterworth = new Butterworth();
+
+        butterworth.highPass(order, fs, cutoff);
+        this.grnCnt = butterworth.filter((double) (this.grnCnt));
+    }
 
     private void processData(){
         byte[] dataPacket = this.packet;
@@ -99,5 +114,7 @@ public class PPGData {
         this.grn2Cnt = (dataPacket[5] & 0xf0) + ((dataPacket[6] & 0xff)<<4) + ((dataPacket[7] & 0xff)<<12);
         this.ppgActivity = ((dataPacket[17] & 0xfe) >> 1) + ((dataPacket[18] & 0x01) << 7);
         Log.i("activity 값 : ", Integer.toString(this.ppgActivity));
+        Log.i("calc값 ", Double.toString(this.grnCnt));
+        applyFilter();
     }
 }

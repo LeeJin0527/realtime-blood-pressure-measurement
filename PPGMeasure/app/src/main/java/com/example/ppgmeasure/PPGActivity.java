@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -312,7 +313,9 @@ public class PPGActivity extends AppCompatActivity {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ppgGraph.addEntry( ppgData.getGrnCnt(), ppgData.getGrn2Cnt());
+                            if(ppgGraph != null) {
+                                ppgGraph.addEntry(ppgData.getGrnCnt(), ppgData.getGrn2Cnt());
+                            }
                         }
                     });
                 }
