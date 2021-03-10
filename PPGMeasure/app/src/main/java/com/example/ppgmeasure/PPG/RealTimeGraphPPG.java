@@ -24,6 +24,12 @@ public class RealTimeGraphPPG {
         creatGraph(view);
     }
 
+    // 그래프 틀을 만들어주는 매서드
+    // 현재 배경에 격자 무늬는 그리지 않도록 하고
+    // 배경은 하얀색이며, x축은 아래쪽에 그리도록 하며
+    // x축의 라벨은 표시하도록 했습니다
+    // y축은 왼쪽에 표시하도록 하며 또한 라벨도 표시하도록 했습니다
+    // 마지막으로 그래프에 대한 설명은 추가하지 않도록 해놨습니다
     private void creatGraph(View view){
         chart = (LineChart)view.findViewById(R.id.LineChart);
         chart.setDrawGridBackground(false);
@@ -39,11 +45,38 @@ public class RealTimeGraphPPG {
         chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         chart.getAxisRight().setEnabled(false);
 
-        chart.setVisibleXRangeMaximum(20);
+        chart.setVisibleXRangeMaximum(120);
         chart.getDescription().setEnabled(false);
 
         chart.invalidate();
     }
+
+    // 그래프에 그려줄 데이터를 입력하는 매서드로, 한 개의 그래프를 그립니다
+    public void addEntry(double num){
+        LineData data = chart.getData();
+
+        if(data == null){
+            data = new LineData();
+            chart.setData(data);
+        }
+
+        ILineDataSet set = data.getDataSetByIndex(0);
+
+        if (set == null) {
+            set = createSet();
+            data.addDataSet(set);
+        }
+
+        data.addEntry(new Entry((float)set.getEntryCount(), (float)num), 0);
+
+        data.notifyDataChanged();
+
+        chart.notifyDataSetChanged();
+        chart.setVisibleXRangeMaximum(120);
+        chart.moveViewToX(data.getEntryCount());
+    }
+
+    // 그래프에 그려줄 데이터를 입력하는 매서드로, 두 개의 그래프를 그립니다
     public void addEntry(double num1, double num2) {
         LineData data = chart.getData();
         float min;
@@ -52,6 +85,7 @@ public class RealTimeGraphPPG {
 
         Log.i(TAG, "ch1 = " + String.valueOf(num1));
         Log.i(TAG, "ch2 = " + String.valueOf(num2));
+        //어떤 값이 그래프에 그려지는 확인용
 
         if(num1 > num2){
             max = (float) num1;
@@ -70,20 +104,10 @@ public class RealTimeGraphPPG {
         }
 
 
-
-        //chart.getAxisLeft().setAxisMaximum(max + 1000);
-        //chart.getAxisLeft().setAxisMinimum(min - 1000);
-
-
-
         if (data == null) {
             data = new LineData();
             chart.setData(data);
-
-
         }
-        LineDataSet set3 = (LineDataSet) data.getDataSetByIndex(0);
-        LineDataSet set4 = (LineDataSet) data.getDataSetByIndex(1);
 
         ILineDataSet set = data.getDataSetByIndex(0);
         // set.addEntry(...); // can be called as well
@@ -97,7 +121,6 @@ public class RealTimeGraphPPG {
             data.addDataSet(set2);
         }
 
-
         data.addEntry(new Entry((float)set.getEntryCount(), (float)num1), 0);
         data.addEntry(new Entry((float)set2.getEntryCount(), (float)num2), 1);
 
@@ -105,15 +128,12 @@ public class RealTimeGraphPPG {
 
         // let the chart know it's data has changed
         chart.notifyDataSetChanged();
-        //count++;
-        //if(count >= 75)yAxiSetting();
 
         chart.setVisibleXRangeMaximum(120);
         // this automatically refreshes the chart (calls invalidate())
         chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.LEFT);
 
     }
-
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "ch1");
         set.setLineWidth(1f);
@@ -136,10 +156,6 @@ public class RealTimeGraphPPG {
         set.setColor(Color.BLUE);
 
         return set;
-    }
-
-    private void yAxiSetting(){
-        count = 0;
     }
 
 }
