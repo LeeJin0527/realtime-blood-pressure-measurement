@@ -51,11 +51,11 @@ public class PPGData {
         this.packet = packet;
         processData();
     }
-
+/*
     public void setCount(int count){
         this.count = count;
     }
-
+*/
     public void setX(int x) {
         this.x = x;
     }

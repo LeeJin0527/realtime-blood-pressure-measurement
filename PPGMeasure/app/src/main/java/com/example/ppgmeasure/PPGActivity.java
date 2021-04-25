@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.ppgmeasure.PPG.PPGData;
 import com.example.ppgmeasure.PPG.RealTimeGraphPPG;
+import com.example.ppgmeasure.PPG.SocketCommunication;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -45,32 +46,29 @@ public class PPGActivity extends AppCompatActivity {
 
     private TextView heartRateField;
     private TextView heartRateConfidenceField;
-    private TextView grnCntField;
-    private TextView grn2CntField;
     private TextView ppgActivityField;
+    private TextView serverData;
 
     private LinearLayout showLayout;
     private LinearLayout progressLayout;
 
-    ArrayList<PPGData>PPGList = new ArrayList<PPGData>();
 
     Activity activity;
 
     Command MAXREFDES101Command;
 
     public PPGData ppgData;
-    double signal[];
-    int count = 0;
-    double previousOriginalPPG = 0;
-    double currentOriginalPPG = 0;
-    double previousFilteredPPG = 0;
-    double currentFilteredPPG = 0;
 
-    public String AppAbsolutePath;
     public double valueForGraph = 0;
     private CSVFile ppgCsvFile;
 
     private boolean mConnected = false;
+    int count = 0;
+
+    SocketCommunication SC;
+    int currentData = -1;
+    LinearLayout signBanner;
+    Thread t;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -144,10 +142,12 @@ public class PPGActivity extends AppCompatActivity {
         // 버튼 initialize
         Button startbtn = (Button)findViewById(R.id.start);
         Button stopbtn = (Button)findViewById(R.id.pause);
+        Button sendSocketMsg = (Button)findViewById(R.id.send_by_socket);
 
         heartRateField = (TextView)findViewById(R.id.ppg_hr_value);
         heartRateConfidenceField = (TextView)findViewById(R.id.ppg_hr_confidence_value);
         ppgActivityField = (TextView)findViewById(R.id.ppg_sensor_activity_value);
+        serverData = (TextView)findViewById(R.id.servercalcdata);
 
         MAXREFDES101Command = new Command();
 
@@ -159,14 +159,27 @@ public class PPGActivity extends AppCompatActivity {
         showLayout = (LinearLayout)findViewById(R.id.show_layout);
         progressLayout = (LinearLayout)findViewById(R.id.loading_layout);
 
-        showLayout.setVisibility(View.GONE);
-        progressLayout.setVisibility(View.VISIBLE);
+        showLayout.setVisibility(View.VISIBLE);
+        progressLayout.setVisibility(View.GONE);
+        //showLayout.setVisibility(View.GONE);
+        //progressLayout.setVisibility(View.VISIBLE);
 
         // CSV 파일 생성
         ppgCsvFile= new CSVFile("PPG");
 
         // 데이터 핸들링 객체 initialize
         ppgData = new PPGData();
+
+        // 서버로 부터 받은 데이터에 대해 banner 색깔별로 표시
+        signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
+
+        // connected to server by socket
+        String ip = "plz enter host address";
+        int port = 1234;//enter server process port number
+        SC = new SocketCommunication(ip, port);
+        setServerData SD = new setServerData();
+        t = new Thread(SD);
+        t.start();
 
 
         // 측정하기 버튼에 대한 동작 정의
@@ -193,6 +206,8 @@ public class PPGActivity extends AppCompatActivity {
         stopbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                count++;
+                if(count > 0){sendSocketMsg.setVisibility(View.VISIBLE);}
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
 
@@ -206,6 +221,22 @@ public class PPGActivity extends AppCompatActivity {
                 initialStartFlag = false;
             }
         });
+
+        // 서버로 파일 보내기 버튼 동작 정의
+        sendSocketMsg.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                SC.sendPacket();
+            }
+        });
+
+    }
+
+    // 뒤로가기 버튼 누르면 연결 종료
+    @Override
+    public void onBackPressed() {
+        SC.closeSocket();
+        t.interrupt();
     }
 
     @Override
@@ -216,6 +247,7 @@ public class PPGActivity extends AppCompatActivity {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
+
     }
 
     @Override
@@ -229,6 +261,8 @@ public class PPGActivity extends AppCompatActivity {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+        SC.closeSocket();
+        t.interrupt();
     }
 
 
@@ -355,6 +389,52 @@ public class PPGActivity extends AppCompatActivity {
         });
 
         realTimeThread.start();
+    }
+
+    public void changeSignBanner(int data){
+        System.out.printf("data in chageSignBanner = %d\n", data);
+        switch (data){
+            case 1:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.black));
+                System.out.println("Black!");
+                break;
+            case 2:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.white));
+                System.out.println("White!");
+                break;
+            case 3:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.purple_500));
+                System.out.println("Purple!");
+                break;
+            default:
+                break;
+        }
+    }
+
+    // 이 부분은 나중에 여건되면, 고치는게 좋을듯함
+    // 스레드로 1초마다 확인하지말고, 인터럽트나 콜백이나 다른 방법으로
+    // 좀 더 우아하게 서버 데이터를 비동기적으로 확인하는 방법이 필요
+    class setServerData implements Runnable{
+        int tmp;
+        @Override
+        public void run() {
+            while(!Thread.currentThread().isInterrupted()){
+
+                tmp = SC.getDataFromServer();
+                if (tmp != currentData) {
+                    currentData = tmp;
+                    changeSignBanner(currentData);
+                }
+                if (tmp == -2) break;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException I) {
+                    I.printStackTrace();
+                }
+
+            }
+            System.out.println("thread terminated");
+        }
     }
 
 }

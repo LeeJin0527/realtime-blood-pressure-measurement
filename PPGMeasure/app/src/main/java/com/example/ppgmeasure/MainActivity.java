@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    //todo : 이건 뭔지 모르겟음
 
 
     private void scanLeDevice(final boolean enable){
