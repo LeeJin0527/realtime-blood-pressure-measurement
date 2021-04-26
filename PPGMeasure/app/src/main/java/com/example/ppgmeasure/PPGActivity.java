@@ -39,10 +39,6 @@ public class PPGActivity extends AppCompatActivity {
     private BluetoothGattCharacteristic writeCharacteristicObject;
     private BluetoothGattCharacteristic notifyCharacteristicObject;
 
-    RealTimeGraphPPG ppgGraph;
-    Thread realTimeThread;
-    Boolean threadFlag;
-    Boolean initialStartFlag;
 
     private TextView heartRateField;
     private TextView heartRateConfidenceField;
@@ -52,18 +48,17 @@ public class PPGActivity extends AppCompatActivity {
     private LinearLayout showLayout;
     private LinearLayout progressLayout;
 
-
     Activity activity;
 
     Command MAXREFDES101Command;
 
     public PPGData ppgData;
 
-    public double valueForGraph = 0;
     private CSVFile ppgCsvFile;
 
     private boolean mConnected = false;
     int count = 0;
+    int numberOfData = 0;
 
     SocketCommunication SC;
     int currentData = -1;
@@ -151,9 +146,6 @@ public class PPGActivity extends AppCompatActivity {
 
         MAXREFDES101Command = new Command();
 
-        realTimeThread = null;
-        threadFlag = false;
-
         activity = PPGActivity.this;
 
         showLayout = (LinearLayout)findViewById(R.id.show_layout);
@@ -174,31 +166,26 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = "plz enter host address";
-        int port = 1234;//enter server process port number
+        String ip = enterIPplz;
+        int port = 1221;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
         t = new Thread(SD);
         t.start();
 
 
+        System.out.println("here?");
         // 측정하기 버튼에 대한 동작 정의
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                ppgCsvFile= new CSVFile("PPG");
                 startbtn.setVisibility(View.GONE);
                 stopbtn.setVisibility(View.VISIBLE);
-                
-                ppgGraph = new RealTimeGraphPPG(view);
-                
-                threadFlag = true;
-                initialStartFlag = true;
                 
                 sendStrCmd(MAXREFDES101Command.str_readppg0);
                 // PPG 측정을 시작하기 위해, MAXREFDES101에 read ppg 0라고 
                 // 명령어를 전송합니다
-                
-                realTimeStart();
             }
         });
 
@@ -211,14 +198,10 @@ public class PPGActivity extends AppCompatActivity {
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
 
-                ppgGraph = null;
-
                 sendStrCmd(MAXREFDES101Command.str_stop);
                 // 일시정지 버튼을 누르면, 현재 MAXREFDES101이 수행하는 동작을 멈추기 위해
                 // "stop" 이라는 문자열을 MAXREFDES101에 전송합니다
 
-                threadFlag = false;
-                initialStartFlag = false;
             }
         });
 
@@ -320,9 +303,9 @@ public class PPGActivity extends AppCompatActivity {
     // 16진수 배열형식의 데이터를 입력하는 부분과 csv파일을 작성하는 부분
     public void process_data(byte[] data){
             ppgData.setPacket(data);
-            valueForGraph = ppgData.getGrnCnt();
             heartRateField.setText(String.valueOf(ppgData.getHeartRate()));
             heartRateConfidenceField.setText(String.valueOf(ppgData.getHeartRateConfidence()) + "%");
+            numberOfData++;
 
             // 액티비티(활동)에 대한 데이터 정보는 PPGData를 참조
             if(ppgData.getPpgActivity() == 0){
@@ -344,8 +327,7 @@ public class PPGActivity extends AppCompatActivity {
                 ppgActivityField.setText("rhythmic activity");
             }
 
-
-            if(initialStartFlag == false) {
+            if(numberOfData > 100) {
                 ppgCsvFile.writePPGFile(ppgData);
                 // CSV를 작성하는 매서드를 호출합니다.
                 // flag를 둔 이유는 처음 10초 동안은 그래프에 데이터가
@@ -353,43 +335,6 @@ public class PPGActivity extends AppCompatActivity {
             }
     }
 
-    // 실시간 그래프를 그려주는 매서드입니다
-    public void realTimeStart(){
-        realTimeThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while(threadFlag){
-                    try {
-                        if(initialStartFlag){
-                            Thread.sleep(10000);
-                            // 처음 10초 부분은 그래프와 csv에 그려주지 않습니다
-                            initialStartFlag = false;
-                        }
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(ppgGraph != null) {
-                                //ppgGraph.addEntry(ppgData.getGrnCnt(), ppgData.getGrn2Cnt());
-                                // 그래프에 그려줄 데이터를 입력하는 매서드 호출
-
-                                // 그래프에 한 종류의 데이터만 출력하고자 하는 경우 아래와 같이
-                                // 매서드를 호출하면 됩니다
-                                // ppgGraph.addEntry(데이터)
-                                ppgGraph.addEntry(ppgData.getGrnCnt());
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-        realTimeThread.start();
-    }
 
     public void changeSignBanner(int data){
         System.out.printf("data in chageSignBanner = %d\n", data);

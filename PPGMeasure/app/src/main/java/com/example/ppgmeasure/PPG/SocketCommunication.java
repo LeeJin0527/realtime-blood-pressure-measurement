@@ -96,8 +96,8 @@ public class SocketCommunication {
     }
 
     class SocketPacketSend extends Thread {
-        File myFile = new File("/data/data/com.example.ppgmeasure", "dummy.csv");
-        //File myFile = new File(Environment.getExternalStorageDirectory(), "PPG.csv");
+        //File myFile = new File("/data/data/com.example.ppgmeasure", "PPG.csv");
+        File myFile = new File(Environment.getExternalStorageDirectory(), "PPG.csv");
         byte[] fileBytes = new byte[(int) myFile.length()];
         byte[] fileLength = (Integer.toString((int) myFile.length())).getBytes();
 

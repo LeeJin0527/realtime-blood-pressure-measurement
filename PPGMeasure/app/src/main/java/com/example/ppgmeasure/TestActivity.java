@@ -12,7 +12,7 @@ import com.example.ppgmeasure.PPG.SocketCommunication;
 public class TestActivity extends AppCompatActivity {
     Button sendBtn;
     String ip = "220.81.117.44";
-    int port = 1234;//enter server process port number
+    int port = 1221;//enter server process port number
     SocketCommunication SC;
     int currentData = -1;
     LinearLayout signBanner;
