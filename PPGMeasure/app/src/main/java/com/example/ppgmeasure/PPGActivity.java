@@ -371,16 +371,16 @@ public class PPGActivity extends AppCompatActivity {
     public void changeSignBanner(int data){
         System.out.printf("data in chageSignBanner = %d\n", data);
         switch (data){
-            case 1:
-                signBanner.setBackgroundColor(getResources().getColor(R.color.black));
+            case 0:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.green));
                 System.out.println("Black!");
                 break;
-            case 2:
-                signBanner.setBackgroundColor(getResources().getColor(R.color.white));
+            case 1:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.yellow));
                 System.out.println("White!");
                 break;
-            case 3:
-                signBanner.setBackgroundColor(getResources().getColor(R.color.purple_500));
+            case 2:
+                signBanner.setBackgroundColor(getResources().getColor(R.color.red));
                 System.out.println("Purple!");
                 break;
             default:
