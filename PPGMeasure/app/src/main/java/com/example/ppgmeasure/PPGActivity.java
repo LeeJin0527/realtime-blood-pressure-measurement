@@ -303,7 +303,7 @@ public class PPGActivity extends AppCompatActivity {
 
             // 읽기/쓰기, 알림 속성 설정이 완료되어 로딩을 끝내는 부분
             if((notifyCharacteristicObject != null) && (writeCharacteristicObject != null)){
-                showLayout.setVisibility(View.VISIBLE);
+                progressDataLayout.setVisibility(View.VISIBLE);
                 progressLayout.setVisibility(View.GONE);
             }
         }
