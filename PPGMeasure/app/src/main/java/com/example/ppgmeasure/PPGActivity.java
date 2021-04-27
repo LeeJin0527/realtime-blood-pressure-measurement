@@ -182,7 +182,7 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = enterplz;
+        String ip = plzenterIP;
         int port = 1221;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
@@ -194,6 +194,7 @@ public class PPGActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showLayout.setVisibility(View.VISIBLE);
+                inputInitialLayout.setVisibility(View.GONE);
                 SBP = SBPEditText.getText().toString();
                 SC.sendSBP(SBP);
             }
