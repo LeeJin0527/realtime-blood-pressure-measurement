@@ -196,7 +196,7 @@ public class PPGActivity extends AppCompatActivity {
             public void onClick(View v) {
                 showLayout.setVisibility(View.VISIBLE);
                 SBP = SBPEditText.getText().toString();
-                SC.sendSBP();
+                SC.sendSBP(SBP);
             }
         });
 
