@@ -226,7 +226,7 @@ public class PPGActivity extends AppCompatActivity {
                 U.interrupt();
                 progressDataLayout.setVisibility(View.GONE);
                 count++;
-                if(count > 0 && numberOfData > 560){sendSocketMsg.setVisibility(View.VISIBLE);}
+                if(count > 0 && numberOfData > 660){sendSocketMsg.setVisibility(View.VISIBLE);}
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
 
@@ -423,9 +423,9 @@ public class PPGActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            while (numberOfData < 560 && !Thread.currentThread().isInterrupted()) {
+            while (numberOfData < 660 && !Thread.currentThread().isInterrupted()) {
                 try{
-                    AP.setProgress(numberOfData/560 * 100);
+                    AP.setProgress((int)(numberOfData/660.0 * 100));
                     Thread.sleep(1000);
                 }catch (InterruptedException e){
                     e.printStackTrace();

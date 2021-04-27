@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -30,10 +31,10 @@
 
             <EditText
                 android:id="@+id/SBP"
-                android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:inputType="numberDecimal"
                 android:text="초기 혈압 값 입력 : "
                 android:textSize="10dp"></EditText>
         </LinearLayout>
@@ -41,11 +42,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp">
+
             <android.widget.Button
                 android:id="@+id/send_by_socket_initial_value"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:text="보내기"/>
+                android:text="보내기" />
         </LinearLayout>
     </LinearLayout>
 
@@ -101,19 +103,22 @@
                 android:textSelectHandle="@anim/fragment_fade_exit"
                 android:textSize="15dp"
                 android:visibility="visible" />
+
             <LinearLayout
                 android:id="@+id/data_loading_layout"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:gravity="center"
                 android:visibility="gone">
-        <com.github.lzyzsd.circleprogress.ArcProgress
-            android:id="@+id/arc_progress"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:arc_progress="30"
-            app:arc_bottom_text="DATA"
-            />
+
+                <com.github.lzyzsd.circleprogress.ArcProgress
+                    android:id="@+id/arc_progress"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:arc_bottom_text="DATA"
+                    app:arc_progress="0"
+                    android:visibility="gone"
+                    />
             </LinearLayout>
         </LinearLayout>
 
