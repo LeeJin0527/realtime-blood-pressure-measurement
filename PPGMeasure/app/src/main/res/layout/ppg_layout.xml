@@ -117,7 +117,6 @@
                     android:layout_height="100dp"
                     app:arc_bottom_text="DATA"
                     app:arc_progress="0"
-                    android:visibility="gone"
                     />
             </LinearLayout>
         </LinearLayout>
