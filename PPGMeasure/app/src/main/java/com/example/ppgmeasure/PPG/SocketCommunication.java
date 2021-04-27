@@ -53,6 +53,11 @@ public class SocketCommunication {
         SPS.start();
     }
 
+    public void sendSBP(String SBPdata){
+        SocketMsgSendSBP SBP = new SocketMsgSendSBP(SBPdata);
+        SBP.start();
+    }
+
 
     class SocketConnection extends Thread {
 
@@ -85,12 +90,32 @@ public class SocketCommunication {
         @Override
         public void run() {
             try {
-
                 dos.writeUTF(msg);
                 SPR.interrupt();
                 socket.close();
             } catch (IOException I) {
                 I.printStackTrace();
+            }
+        }
+    }
+
+    class SocketMsgSendSBP extends Thread{
+        String SBP;
+
+        SocketMsgSendSBP(String SBP) {
+            this.SBP = SBP;
+        }
+
+        @Override
+        public void run() {
+            try {
+                dos.writeUTF("SBP");
+                Thread.sleep(1000);
+                dos.writeUTF(this.SBP);
+            } catch (IOException I) {
+                I.printStackTrace();
+            }catch (InterruptedException e){
+                e.printStackTrace();
             }
         }
     }

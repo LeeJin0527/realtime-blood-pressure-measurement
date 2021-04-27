@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ppg_layout"
     android:layout_width="match_parent"
@@ -7,6 +8,46 @@
     android:layout_margin="10dp"
     android:orientation="vertical"
     android:tag="ppgfragment">
+
+    <LinearLayout
+        android:id="@+id/input_initial"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="초기 혈압 값(SBP) : "
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/SBP"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:text="초기 혈압 값 입력 : "
+                android:textSize="10dp"></EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+            <android.widget.Button
+                android:id="@+id/send_by_socket_initial_value"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="보내기"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/show_layout"
@@ -49,6 +90,7 @@
                 android:textSelectHandle="@anim/fragment_fade_exit"
                 android:textSize="25dp"
                 android:visibility="gone" />
+
             <android.widget.Button
                 android:id="@+id/send_by_socket"
                 android:layout_width="400px"
@@ -58,7 +100,21 @@
                 android:text="서버로 데이터 전송"
                 android:textSelectHandle="@anim/fragment_fade_exit"
                 android:textSize="15dp"
-                android:visibility="visible"/>
+                android:visibility="visible" />
+            <LinearLayout
+                android:id="@+id/data_loading_layout"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:visibility="gone">
+        <com.github.lzyzsd.circleprogress.ArcProgress
+            android:id="@+id/arc_progress"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:arc_progress="30"
+            app:arc_bottom_text="DATA"
+            />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -166,7 +222,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="data"
                     android:textSize="20dp" />
             </LinearLayout>
 

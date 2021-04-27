@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,10 @@ import androidx.core.app.ActivityCompat;
 import com.example.ppgmeasure.PPG.PPGData;
 import com.example.ppgmeasure.PPG.RealTimeGraphPPG;
 import com.example.ppgmeasure.PPG.SocketCommunication;
+import com.github.lzyzsd.circleprogress.ArcProgress;
+
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.apache.commons.math3.geometry.spherical.oned.Arc;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -47,6 +52,10 @@ public class PPGActivity extends AppCompatActivity {
 
     private LinearLayout showLayout;
     private LinearLayout progressLayout;
+    private LinearLayout progressDataLayout;
+    private LinearLayout inputInitialLayout;
+
+    private EditText SBPEditText;
 
     Activity activity;
 
@@ -64,6 +73,8 @@ public class PPGActivity extends AppCompatActivity {
     int currentData = -1;
     LinearLayout signBanner;
     Thread t;
+    upDateLoading U;
+    String SBP;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -138,6 +149,7 @@ public class PPGActivity extends AppCompatActivity {
         Button startbtn = (Button)findViewById(R.id.start);
         Button stopbtn = (Button)findViewById(R.id.pause);
         Button sendSocketMsg = (Button)findViewById(R.id.send_by_socket);
+        Button sendSBP = (Button)findViewById(R.id.send_by_socket_initial_value);
 
         heartRateField = (TextView)findViewById(R.id.ppg_hr_value);
         heartRateConfidenceField = (TextView)findViewById(R.id.ppg_hr_confidence_value);
@@ -150,11 +162,16 @@ public class PPGActivity extends AppCompatActivity {
 
         showLayout = (LinearLayout)findViewById(R.id.show_layout);
         progressLayout = (LinearLayout)findViewById(R.id.loading_layout);
+        progressDataLayout = (LinearLayout)findViewById(R.id.data_loading_layout);
+        inputInitialLayout = (LinearLayout)findViewById(R.id.input_initial);
 
-        showLayout.setVisibility(View.VISIBLE);
-        progressLayout.setVisibility(View.GONE);
-        //showLayout.setVisibility(View.GONE);
-        //progressLayout.setVisibility(View.VISIBLE);
+        SBPEditText = (EditText)findViewById(R.id.SBP);
+
+        //showLayout.setVisibility(View.VISIBLE);
+        //progressLayout.setVisibility(View.GONE);
+        showLayout.setVisibility(View.GONE);
+        inputInitialLayout.setVisibility(View.VISIBLE);
+
 
         // CSV 파일 생성
         ppgCsvFile= new CSVFile("PPG");
@@ -173,16 +190,29 @@ public class PPGActivity extends AppCompatActivity {
         t = new Thread(SD);
         t.start();
 
+        //초기 혈압 값 SBP 버튼에 대한 동작 정의
+        sendSBP.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                showLayout.setVisibility(View.VISIBLE);
+                SBP = SBPEditText.getText().toString();
+                SC.sendSBP();
+            }
+        });
 
-        System.out.println("here?");
         // 측정하기 버튼에 대한 동작 정의
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                numberOfData = 0;
                 ppgCsvFile= new CSVFile("PPG");
                 startbtn.setVisibility(View.GONE);
                 stopbtn.setVisibility(View.VISIBLE);
-                
+                progressDataLayout.setVisibility(View.VISIBLE);
+
+                 U = new upDateLoading(findViewById(R.id.arc_progress));
+                 U.start();
+
                 sendStrCmd(MAXREFDES101Command.str_readppg0);
                 // PPG 측정을 시작하기 위해, MAXREFDES101에 read ppg 0라고 
                 // 명령어를 전송합니다
@@ -193,8 +223,10 @@ public class PPGActivity extends AppCompatActivity {
         stopbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                U.interrupt();
+                progressDataLayout.setVisibility(View.GONE);
                 count++;
-                if(count > 0){sendSocketMsg.setVisibility(View.VISIBLE);}
+                if(count > 0 && numberOfData > 560){sendSocketMsg.setVisibility(View.VISIBLE);}
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
 
@@ -379,6 +411,26 @@ public class PPGActivity extends AppCompatActivity {
 
             }
             System.out.println("thread terminated");
+        }
+    }
+
+    class upDateLoading extends Thread{
+        ArcProgress AP;
+
+        upDateLoading(ArcProgress AP){
+            this.AP = AP;
+        }
+
+        @Override
+        public void run() {
+            while (numberOfData < 560 && !Thread.currentThread().isInterrupted()) {
+                try{
+                    AP.setProgress(numberOfData/560 * 100);
+                    Thread.sleep(1000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
