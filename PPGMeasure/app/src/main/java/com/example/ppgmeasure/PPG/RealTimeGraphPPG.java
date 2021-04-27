@@ -1,4 +1,4 @@
-package com.example.ppgmeasure.PPG;
+/*package com.example.ppgmeasure.PPG;
 
 import android.graphics.Color;
 import android.util.Log;
@@ -23,13 +23,14 @@ public class RealTimeGraphPPG {
     public RealTimeGraphPPG(View view){
         creatGraph(view);
     }
-
+*/
     // 그래프 틀을 만들어주는 매서드
     // 현재 배경에 격자 무늬는 그리지 않도록 하고
     // 배경은 하얀색이며, x축은 아래쪽에 그리도록 하며
     // x축의 라벨은 표시하도록 했습니다
     // y축은 왼쪽에 표시하도록 하며 또한 라벨도 표시하도록 했습니다
     // 마지막으로 그래프에 대한 설명은 추가하지 않도록 해놨습니다
+    /*
     private void creatGraph(View view){
         chart = (LineChart)view.findViewById(R.id.LineChart);
         chart.setDrawGridBackground(false);
@@ -159,3 +160,4 @@ public class RealTimeGraphPPG {
     }
 
 }
+*/

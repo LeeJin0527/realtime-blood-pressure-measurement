@@ -24,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.ppgmeasure.PPG.PPGData;
-import com.example.ppgmeasure.PPG.RealTimeGraphPPG;
 import com.example.ppgmeasure.PPG.SocketCommunication;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
@@ -183,7 +182,7 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = enterIPplz;
+        String ip = enterplz;
         int port = 1221;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
