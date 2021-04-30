@@ -12,8 +12,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -182,7 +185,7 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = plzenterIP;
+        String ip = plz enter host ip;
         int port = 1221;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
@@ -197,6 +200,10 @@ public class PPGActivity extends AppCompatActivity {
                 inputInitialLayout.setVisibility(View.GONE);
                 SBP = SBPEditText.getText().toString();
                 SC.sendSBP(SBP);
+
+                // 키보드 내리기
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(SBPEditText.getWindowToken(), 0);
             }
         });
 
@@ -209,6 +216,7 @@ public class PPGActivity extends AppCompatActivity {
                 startbtn.setVisibility(View.GONE);
                 stopbtn.setVisibility(View.VISIBLE);
                 progressDataLayout.setVisibility(View.VISIBLE);
+                sendSocketMsg.setVisibility(View.GONE);
 
                  U = new upDateLoading(findViewById(R.id.arc_progress));
                  U.start();
@@ -246,6 +254,8 @@ public class PPGActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     // 뒤로가기 버튼 누르면 연결 종료
     @Override
@@ -387,6 +397,11 @@ public class PPGActivity extends AppCompatActivity {
                 break;
         }
     }
+    public void createPopUpActivity(int data){
+        Intent intent = new Intent(this, PopUpActivity.class);
+        intent.putExtra("data", String.valueOf(data));
+        startActivityForResult(intent, 1);
+    }
 
     // 이 부분은 나중에 여건되면, 고치는게 좋을듯함
     // 스레드로 1초마다 확인하지말고, 인터럽트나 콜백이나 다른 방법으로
@@ -401,6 +416,7 @@ public class PPGActivity extends AppCompatActivity {
                 if (tmp != currentData) {
                     currentData = tmp;
                     changeSignBanner(currentData);
+                    createPopUpActivity(currentData);
                 }
                 if (tmp == -2) break;
                 try {
@@ -416,6 +432,7 @@ public class PPGActivity extends AppCompatActivity {
 
     class upDateLoading extends Thread{
         ArcProgress AP;
+        Button sendSocketMsg = (Button)findViewById(R.id.send_by_socket);
 
         upDateLoading(ArcProgress AP){
             this.AP = AP;
@@ -423,7 +440,7 @@ public class PPGActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            while (numberOfData < 660 && !Thread.currentThread().isInterrupted()) {
+            while (numberOfData <= 660 && !Thread.currentThread().isInterrupted()) {
                 try{
                     AP.setProgress((int)(numberOfData/660.0 * 100));
                     Thread.sleep(1000);
@@ -431,6 +448,8 @@ public class PPGActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+            sendSocketMsg.setVisibility(View.VISIBLE);
+
         }
     }
 

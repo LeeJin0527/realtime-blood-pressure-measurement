@@ -28,10 +28,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-
             </intent-filter>
         </activity>
         <activity android:name=".PPGActivity"/>
+        <activity android:name=".PopUpActivity" android:theme="@android:style/Theme.Dialog"/>
         <service android:name=".BluetoothLeService" android:enabled="true"/>
 
 

@@ -35,8 +35,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:inputType="numberDecimal"
-                android:text="초기 혈압 값 입력 : "
-                android:textSize="10dp"></EditText>
+                android:hint="입력 해 주세요"
+                android:textSize="20dp"></EditText>
         </LinearLayout>
 
         <LinearLayout
