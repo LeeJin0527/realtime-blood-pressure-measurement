@@ -102,7 +102,7 @@
                 android:text="서버로 데이터 전송"
                 android:textSelectHandle="@anim/fragment_fade_exit"
                 android:textSize="15dp"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
             <LinearLayout
                 android:id="@+id/data_loading_layout"

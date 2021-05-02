@@ -185,7 +185,7 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = plz enter host ip;
+        String ip = plz enter ip host;
         int port = 1221;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
@@ -234,9 +234,10 @@ public class PPGActivity extends AppCompatActivity {
                 U.interrupt();
                 progressDataLayout.setVisibility(View.GONE);
                 count++;
-                if(count > 0 && numberOfData > 660){sendSocketMsg.setVisibility(View.VISIBLE);}
+                if(count > 0 && numberOfData >= 660){sendSocketMsg.setVisibility(View.VISIBLE);}
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
+                sendSocketMsg.setVisibility(View.INVISIBLE);
 
                 sendStrCmd(MAXREFDES101Command.str_stop);
                 // 일시정지 버튼을 누르면, 현재 MAXREFDES101이 수행하는 동작을 멈추기 위해
@@ -443,12 +444,19 @@ public class PPGActivity extends AppCompatActivity {
             while (numberOfData <= 660 && !Thread.currentThread().isInterrupted()) {
                 try{
                     AP.setProgress((int)(numberOfData/660.0 * 100));
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
             }
-            sendSocketMsg.setVisibility(View.VISIBLE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sendSocketMsg.setVisibility(View.VISIBLE);
+                }
+            });
+
+
 
         }
     }
