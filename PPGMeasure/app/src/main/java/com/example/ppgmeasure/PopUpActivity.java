@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+
+import com.example.ppgmeasure.PPG.SocketCommunication;
 
 import org.w3c.dom.Text;
 
@@ -32,6 +35,7 @@ public class PopUpActivity extends Activity {
         exitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                //ActivityCompat.finishAffinity(PopUpActivity.this);
                 finish();
             }
         });

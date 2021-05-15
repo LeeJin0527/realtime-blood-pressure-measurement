@@ -145,7 +145,6 @@ public class PPGData {
         this.grnCnt = (dataPacket[3] & 0xff ) + ((dataPacket[4] & 0xff )<<8) + ((dataPacket[5] & 0x0f)<<16);
         this.grn2Cnt = (dataPacket[5] & 0xf0) + ((dataPacket[6] & 0xff)<<4) + ((dataPacket[7] & 0xff)<<12);
         this.ppgActivity = ((dataPacket[17] & 0xfe) >> 1) + ((dataPacket[18] & 0x01) << 7);
-        Log.i("activity 값 : ", Integer.toString(this.ppgActivity));
         Log.i("calc값 ", Double.toString(this.grnCnt));
         //applyFilter();
     }

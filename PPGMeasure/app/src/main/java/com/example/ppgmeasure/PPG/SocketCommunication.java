@@ -53,10 +53,11 @@ public class SocketCommunication {
         SPS.start();
     }
 
-    public void sendSBP(String SBPdata){
-        SocketMsgSendSBP SBP = new SocketMsgSendSBP(SBPdata);
+    public void sendSBP(String SBPdata, String id){
+        SocketMsgSendSBP SBP = new SocketMsgSendSBP(SBPdata, id);
         SBP.start();
     }
+
 
 
     class SocketConnection extends Thread {
@@ -80,6 +81,9 @@ public class SocketCommunication {
             } catch (IOException I) {
                 Log.i("[DataIOStream]", "DATA IO stream fail");
                 I.printStackTrace();
+            } catch (NullPointerException N){
+                N.printStackTrace();
+                Log.i("[NULL]","소켓쪽에서 null pointer error!");
             }
             SPR = new SocketPacketReceive();
             SPR.start();
@@ -101,14 +105,19 @@ public class SocketCommunication {
 
     class SocketMsgSendSBP extends Thread{
         String SBP;
+        String Id;
 
-        SocketMsgSendSBP(String SBP) {
+        SocketMsgSendSBP(String SBP, String id) {
             this.SBP = SBP;
+            this.Id = id;
         }
 
         @Override
         public void run() {
             try {
+                System.out.println("기기 고유 id" + this.Id);
+                dos.writeUTF(this.Id);
+                Thread.sleep(500);
                 dos.writeUTF("SBP");
                 Thread.sleep(1000);
                 dos.writeUTF(this.SBP);
@@ -142,6 +151,11 @@ public class SocketCommunication {
                     e.printStackTrace();
                 }
                 dos.writeUTF(Integer.toString((int) myFile.length()));
+                try {
+                    Thread.sleep(2000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
                 dos.flush();
                 dos.write(fileBytes, 0, fileBytes.length);
                 dos.flush();

@@ -10,8 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.ppgmeasure.PPG.PPGData;
 import com.example.ppgmeasure.PPG.SocketCommunication;
@@ -70,6 +74,7 @@ public class PPGActivity extends AppCompatActivity {
     private boolean mConnected = false;
     int count = 0;
     int numberOfData = 0;
+    int arcCount = 0;
 
     SocketCommunication SC;
     int currentData = -1;
@@ -185,12 +190,19 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
 
         // connected to server by socket
-        String ip = plz enter ip host;
-        int port = 1221;//enter server process port number
+        String ip = "192.168.100.101";
+        int port = 1219;//enter server process port number
         SC = new SocketCommunication(ip, port);
         setServerData SD = new setServerData();
         t = new Thread(SD);
         t.start();
+
+        //MAC 가져오기
+        //기기 고유 id 가져오기
+        String id = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        System.out.println("단말기 고유 id = " + id);
+
+        AutoSensing AS;
 
         //초기 혈압 값 SBP 버튼에 대한 동작 정의
         sendSBP.setOnClickListener(new View.OnClickListener(){
@@ -199,7 +211,7 @@ public class PPGActivity extends AppCompatActivity {
                 showLayout.setVisibility(View.VISIBLE);
                 inputInitialLayout.setVisibility(View.GONE);
                 SBP = SBPEditText.getText().toString();
-                SC.sendSBP(SBP);
+                SC.sendSBP(SBP, id);
 
                 // 키보드 내리기
                 InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -212,17 +224,26 @@ public class PPGActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 numberOfData = 0;
+                count = 0;
+                arcCount = 0;
+                U = new upDateLoading(findViewById(R.id.arc_progress));
+                U.start();
+                startbtn.setVisibility(View.GONE);
+                stopbtn.setVisibility(View.VISIBLE);
+                sendStrCmd(MAXREFDES101Command.str_readppg0);
+                /*
                 ppgCsvFile= new CSVFile("PPG");
                 startbtn.setVisibility(View.GONE);
                 stopbtn.setVisibility(View.VISIBLE);
                 progressDataLayout.setVisibility(View.VISIBLE);
                 sendSocketMsg.setVisibility(View.GONE);
 
-                 U = new upDateLoading(findViewById(R.id.arc_progress));
-                 U.start();
+                U = new upDateLoading(findViewById(R.id.arc_progress));
+                U.start();
 
                 sendStrCmd(MAXREFDES101Command.str_readppg0);
-                // PPG 측정을 시작하기 위해, MAXREFDES101에 read ppg 0라고 
+                */
+                // PPG 측정을 시작하기 위해, MAXREFDES101에 read ppg 0라고
                 // 명령어를 전송합니다
             }
         });
@@ -232,14 +253,20 @@ public class PPGActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 U.interrupt();
+                /*
+                U.interrupt();
                 progressDataLayout.setVisibility(View.GONE);
                 count++;
-                if(count > 0 && numberOfData >= 660){sendSocketMsg.setVisibility(View.VISIBLE);}
+                if(count > 0 && numberOfData >= 661){sendSocketMsg.setVisibility(View.VISIBLE);}
                 startbtn.setVisibility(View.VISIBLE);
                 stopbtn.setVisibility(View.GONE);
-                sendSocketMsg.setVisibility(View.INVISIBLE);
 
+                 */
+                //sendSocketMsg.setVisibility(View.INVISIBLE);
+                //AS.interrupt();
                 sendStrCmd(MAXREFDES101Command.str_stop);
+                startbtn.setVisibility(View.VISIBLE);
+                stopbtn.setVisibility(View.GONE);
                 // 일시정지 버튼을 누르면, 현재 MAXREFDES101이 수행하는 동작을 멈추기 위해
                 // "stop" 이라는 문자열을 MAXREFDES101에 전송합니다
 
@@ -370,8 +397,33 @@ public class PPGActivity extends AppCompatActivity {
                 ppgActivityField.setText("rhythmic activity");
             }
 
-            if(numberOfData > 100) {
+            if(numberOfData > 10) {
                 ppgCsvFile.writePPGFile(ppgData);
+                if((numberOfData % 60) == 0){
+                    sendStrCmd(MAXREFDES101Command.str_stop);
+                    SC.sendPacket();
+                    try{
+                    Thread.sleep(5000);}
+                    catch(InterruptedException I){
+                        I.printStackTrace();
+                    }
+
+                    count++;
+                    arcCount++;
+                    ppgCsvFile = new CSVFile("PPG");
+                    numberOfData = 0;
+                    sendStrCmd(MAXREFDES101Command.str_readppg0);
+                }
+                if(count == 9){
+                    numberOfData = 0;
+                    count = 0;
+                    sendStrCmd(MAXREFDES101Command.str_stop);
+                    Button startBtn = findViewById(R.id.start);
+                    startBtn.setVisibility(View.VISIBLE);
+                    Button stopBtn = findViewById(R.id.pause);
+                    stopBtn.setVisibility(View.GONE);
+                }
+
                 // CSV를 작성하는 매서드를 호출합니다.
                 // flag를 둔 이유는 처음 10초 동안은 그래프에 데이터가
                 // 표시되지 않을때, CSV파일 작성도 하지 않아야 하기 때문
@@ -441,10 +493,10 @@ public class PPGActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            while (numberOfData <= 660 && !Thread.currentThread().isInterrupted()) {
+            while (arcCount <= 8 && !Thread.currentThread().isInterrupted()) {
                 try{
-                    AP.setProgress((int)(numberOfData/660.0 * 100));
-                    Thread.sleep(100);
+                    AP.setProgress((int)(arcCount/9.0 * 100));
+                    Thread.sleep(3000);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
@@ -457,7 +509,60 @@ public class PPGActivity extends AppCompatActivity {
             });
 
 
+            arcCount = 0;
+        }
 
+    }
+    class AutoSensing extends Thread{
+        // 여기서 자동으로 8번 측정하기 로직 수행
+        // 센싱 시작 -> 쓰는건(다른 스레드에서 실행되고 있음) -> (?)
+        // 660개가 되면 stop 메시지 먼저 전송 ->
+        // 파일 전송 -> 이 과정을 8번 수행
+        // (?) : sleep 걸고 인터럽트로?
+        upDateLoading UP = new upDateLoading(findViewById(R.id.arc_progress));
+
+        @Override
+        public void run() {
+            //UP.start();
+            while(true){
+                if(count == 8) {
+                    break;
+                }
+                if(numberOfData == 0){
+                    System.out.println("CSV 생성!");
+                    ppgCsvFile = new CSVFile("PPG");
+                    System.out.println("read 메시지 전송!");
+                    sendStrCmd(MAXREFDES101Command.str_readppg0);
+                    try {
+                        Thread.sleep(1000);
+
+                    }catch (InterruptedException I){
+                        I.printStackTrace();
+                    }
+
+                }
+                if(numberOfData >= 150) {
+                    sendStrCmd(MAXREFDES101Command.str_stop);
+                    count++;
+                    numberOfData = 0;
+                    SC.sendPacket();
+                    try {
+                        Thread.sleep(3000);
+
+                    }catch (InterruptedException I){
+                        I.printStackTrace();
+                    }
+                }
+                /*
+                try {
+                    Thread.sleep(500);
+
+                }catch (InterruptedException I){
+                    I.printStackTrace();
+                }*/
+                }
+
+            System.out.println("done!");
         }
     }
 

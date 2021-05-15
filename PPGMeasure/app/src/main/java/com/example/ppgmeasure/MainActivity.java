@@ -1,6 +1,7 @@
 package com.example.ppgmeasure;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -16,6 +17,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +34,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 final Intent intent = new Intent(view.getContext(), PPGActivity.class);
                 intent.putExtra("DEVICE_NAME", BLEDeviceName);
                 intent.putExtra("DEVICE_ADDRESS", BLEDeviceMAC);
+                scanLeDevice(false);
 
                 startActivity(intent);
 
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             mBLEDeviceAdapter.addDevice(result.getDevice());
             mBLEDeviceAdapter.notifyDataSetChanged();
-            Log.i("스캔 결과", "장치가 스캔되었습니다");
+            //Log.i("스캔 결과", "장치가 스캔되었습니다");
         }
 
         @Override
