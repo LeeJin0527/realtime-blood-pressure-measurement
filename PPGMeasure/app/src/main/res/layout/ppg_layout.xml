@@ -10,115 +10,152 @@
     android:tag="ppgfragment">
 
     <LinearLayout
-        android:id="@+id/input_initial"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="초기 혈압 값(SBP) : "
-                android:textSize="20dp" />
-
-            <EditText
-                android:id="@+id/SBP"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:inputType="numberDecimal"
-                android:hint="입력 해 주세요"
-                android:textSize="20dp"></EditText>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
-
-            <android.widget.Button
-                android:id="@+id/send_by_socket_initial_value"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="보내기" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/show_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <LinearLayout
+            android:orientation="vertical"
+            android:background="@drawable/shadow"
+            >
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <android.widget.Button
-                    android:id="@+id/start"
-                    android:layout_width="400px"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/transparent_bg_bordered_button"
-                    android:text="측정하기"
-                    android:textSelectHandle="@anim/fragment_fade_exit"
-                    android:textSize="25dp" />
-
-            </LinearLayout>
-
-            <android.widget.Button
-                android:id="@+id/pause"
-                android:layout_width="500px"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/transparent_bg_bordered_button"
-                android:text="일시정지"
-                android:textSelectHandle="@anim/fragment_fade_exit"
-                android:textSize="25dp"
-                android:visibility="gone" />
-
-            <android.widget.Button
-                android:id="@+id/send_by_socket"
-                android:layout_width="400px"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/transparent_bg_bordered_button"
-                android:text="서버로 데이터 전송"
-                android:textSelectHandle="@anim/fragment_fade_exit"
-                android:textSize="15dp"
-                android:visibility="invisible" />
-
+                android:text="Collected file progress"
+                android:textSize="20dp"
+                android:gravity="center"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <LinearLayout
-                android:id="@+id/data_loading_layout"
+                android:id="@+id/file_count_bar1"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar2"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar3"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar4"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar5"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar6"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar7"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar8"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+            <LinearLayout
+                android:id="@+id/file_count_bar9"
+                android:layout_width="30dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:background="@drawable/stroke_loading_bar"
+                android:layout_margin="2dp"
+                android:orientation="vertical"/>
+
+        </LinearLayout>
+            <TextView
+                android:id="@+id/file_count_text_view"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:visibility="gone">
+                android:textSize="15dp"
+                android:text="The device has been collect 0 file">
+            </TextView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                android:background="@drawable/upper_hr"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:id="@+id/data_loading_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    android:layout_marginTop="5dp">
 
-                <com.github.lzyzsd.circleprogress.ArcProgress
-                    android:id="@+id/arc_progress"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:arc_bottom_text="DATA"
-                    app:arc_progress="0"
-                    />
+                    <com.github.lzyzsd.circleprogress.ArcProgress
+                        android:id="@+id/arc_progress"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:arc_bottom_text="DATA"
+                        app:arc_progress="0"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="25dp"
+                        android:text="Data : "/>
+                    <TextView
+                        android:id="@+id/current_number_of_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="25dp"
+                        android:text="0/561"/>
+
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -178,7 +215,36 @@
                     android:visibility="visible" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/shadow"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/ppg_sensor_activity_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Activity"
+                    android:textSize="18dp"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/ppg_sensor_activity_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="rest"
+                    android:textColorHighlight="@color/black"
+                    android:textSize="15dp"
+                    android:visibility="visible" />
+            </LinearLayout>
+
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -186,48 +252,140 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/shadow"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/ppg_sensor_activity_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Activity"
-                android:textSize="18dp"
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/ppg_sensor_activity_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="rest"
-                android:textColorHighlight="@color/black"
-                android:textSize="25dp"
-                android:visibility="visible" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/shadow"
-            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="혈압 추정 결과"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/serverDataColor"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="#FF0000"
+                android:layout_height="40dp"
+                android:background="#857575"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/servercalcdata"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:gravity="center_horizontal"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:text="결과 없음"/>
             </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/shadow">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:text="초기 수축기 혈앖 값(SBP) : "/>
+            <EditText
+                android:id="@+id/SBP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:hint="121.2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:text="초기 이완기 혈압 값(DBP) : "/>
+            <EditText
+                android:id="@+id/DBP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:hint="94.6"/>
+        </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <CheckBox
+                android:id="@+id/blood_pressure_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="혈압 추정 모드"/>
+            <CheckBox
+                android:id="@+id/normal_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="단순 측정 모드"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <android.widget.Button
+                    android:id="@+id/start"
+                    android:layout_width="400px"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/transparent_bg_bordered_button"
+                    android:text="측정하기"
+                    android:textSelectHandle="@anim/fragment_fade_exit"
+                    android:textSize="25dp" />
+
+            </LinearLayout>
+
+            <android.widget.Button
+                android:id="@+id/pause"
+                android:layout_width="500px"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/transparent_bg_bordered_button"
+                android:text="일시정지"
+                android:textSelectHandle="@anim/fragment_fade_exit"
+                android:textSize="25dp"
+                android:visibility="gone" />
+
+            <android.widget.Button
+                android:id="@+id/send_by_socket"
+                android:layout_width="400px"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/transparent_bg_bordered_button"
+                android:text="서버로 데이터 전송"
+                android:textSelectHandle="@anim/fragment_fade_exit"
+                android:textSize="15dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
