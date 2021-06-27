@@ -41,7 +41,7 @@ public class SocketCommunication{
         @Override
         public void run() {
             byte[] msg = new byte[30];
-            int count = 2;
+            int count = 0;
             try {
                 socket = new Socket(ip, port);
                 System.out.println(socket.isConnected());
@@ -67,62 +67,44 @@ public class SocketCommunication{
             try{
                 dos.writeUTF(deviceID);
                 System.out.println("deviceID 전송 완료");
-            }catch (IOException I){
-                I.printStackTrace();
-                Log.i("[IOException]", "device id sending error!");
-            }
 
-            try{
                 dis.read(msg);
                 System.out.println("sync 수신 완료");
-            }catch (IOException I){
-                I.printStackTrace();
-                Log.i("[IOException]", "sync receive error!");
-            }
 
-
-            try{
                 dos.writeUTF("SBP");
-                Thread.sleep(1000);
-                dos.writeUTF(SBP);
                 System.out.println("SBP 전송 완료");
-            }catch (IOException I){
-                I.printStackTrace();
-                Log.i("[IOException]", "SBP sending error!");
-            }catch (InterruptedException In){
-                In.printStackTrace();
-            }
 
-            try{
                 dis.read(msg);
                 System.out.println("sync 수신 완료");
-            }catch (IOException I){
-                I.printStackTrace();
-                Log.i("[IOException]", "sync receive error!");
-            }
 
-            try{
+                dos.writeUTF(SBP);
+                System.out.println("SBP 값 전송 완료");
+
+                dis.read(msg);
+                System.out.println("sync 수신 완료");
+
                 dos.writeUTF("DBP");
-                Thread.sleep(1000);
-                dos.writeUTF(DBP);
                 System.out.println("DBP 전송 완료");
-            }catch (IOException I){
-                I.printStackTrace();
-                Log.i("[IOException]", "DBP sending error!");
-            }catch (InterruptedException In){
-                In.printStackTrace();
-            }
 
-            try{
                 dis.read(msg);
                 System.out.println("sync 수신 완료");
+
+                dos.writeUTF(DBP);
+                System.out.println("DBP 값 전송 완료");
+
+                dis.read(msg);
+                System.out.println("sync 수신 완료");
+
             }catch (IOException I){
                 I.printStackTrace();
-                Log.i("[IOException]", "sync receive error!");
+                Log.i("[IOException]", "device sending error!");
             }
-            //while (count > 9){
+
+
+            while (count < 9){
                 System.out.println("파일 전송 시작 " + String.valueOf(count) );
                 String filename = "PPG" + String.valueOf(count) + ".csv";
+                //File myFile = new File("/data/data/com.example.ppgmeasure", filename);
                 File myFile = new File(Environment.getExternalStorageDirectory(), filename);
                 byte[] fileBytes = new byte[(int) myFile.length()];
                 byte[] fileLength = (Integer.toString((int) myFile.length())).getBytes();
@@ -132,6 +114,7 @@ public class SocketCommunication{
                     bis.read(fileBytes);
                     System.out.printf("length : %d\n", fileBytes.length);
                     System.out.println(dos);
+
                     dos.writeUTF("CSV_Data");
                     dos.flush();
 
@@ -167,13 +150,15 @@ public class SocketCommunication{
 
 
                 }catch (FileNotFoundException F){
+                    System.out.println("error occur!");
                     F.printStackTrace();
                 }catch (IOException I){
+                    System.out.println("error occur!");
                     I.printStackTrace();
                 }
 
 
-            //}
+            }
     }
 
 
@@ -326,9 +311,9 @@ public class SocketCommunication {
                 e.printStackTrace();
             }
         }
+    class SocketPacketSend extends Thread {
     }
 
-    class SocketPacketSend extends Thread {
         //File myFile = new File("/data/data/com.example.ppgmeasure", "PPG.csv");
         File myFile = new File(Environment.getExternalStorageDirectory(), "PPG.csv");
         byte[] fileBytes = new byte[(int) myFile.length()];

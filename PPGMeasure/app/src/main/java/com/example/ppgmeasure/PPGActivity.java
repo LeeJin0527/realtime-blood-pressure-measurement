@@ -202,24 +202,23 @@ public class PPGActivity extends AppCompatActivity {
         signBanner = (LinearLayout)findViewById(R.id.serverDataColor);
         String id = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         // 측정하기 버튼에 대한 동작 정의
+        progressLayout.setVisibility(View.INVISIBLE);
+        showLayout.setVisibility(View.VISIBLE);
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                /*
                 numberOfData = 0;
                 count = 0;
                 arcCount = 0;
                 startbtn.setVisibility(View.GONE);
                 stopbtn.setVisibility(View.VISIBLE);
-                sendStrCmd(MAXREFDES101Command.str_readppg0);*/
+                sendStrCmd(MAXREFDES101Command.str_readppg0);
 
-                String ip = "106.248.251.30";
                 //String ip = "106.248.251.30";
-                int port = 1219;//enter server process port number
-                System.out.println("단말기 고유 id = " + id);
+                //int port = 6666;//enter server process port number
+                //System.out.println("단말기 고유 id = " + id);
 
-                SocketCommunication SC = new SocketCommunication(ip, port, id, SBP, DBP );
-
+                //SocketCommunication SC = new SocketCommunication(ip, port, id, SBP, DBP );
 
 
                 // PPG 측정을 시작하기 위해, MAXREFDES101에 read ppg 0라고
