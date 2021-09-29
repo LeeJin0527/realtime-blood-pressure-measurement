@@ -95,9 +95,6 @@ else{
 
 ### 5. 심박수(ECG) 측정  
 
-ECG 측정 데모          |  ECG 측정 영상
-:-------------------------:|:-------------------------:
-<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg%202.jpg" width="40%" height="30%">  |  <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg2_play.gif" width="40%" height="30%">
 <p float="left">
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg%202.jpg" width="45%" height="30%"><img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg2_play.gif" width="45%" height="30%">
 </p>
