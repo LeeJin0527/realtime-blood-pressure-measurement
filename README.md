@@ -4,7 +4,6 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 사용자의 체온, 심박수(ECG, PPG)를 측정하여 수집한 다음 수치와 실시간 그래프로 보여주고, 파일로 저장
 하는 프로젝트입니다.
 
----
 
 ## Android Application Part
 사용 언어 : Java, Kotlin
@@ -17,38 +16,46 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 
 ### Demo 
 
-1. 블루투스 기기 선택화면
+#### 1. 블루투스 기기 선택화면
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/device_select.jpg" width="40%" height="30%">
 
-BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE 서비스 UUID 필터를 블루투스 어댑테 객체에 추가한 다음에, 스캔하도록 하였음.
+BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE 서비스 <u>**UUID 필터**</u>를 블루투스 어댑테 객체에 추가한 다음에, 스캔하도록 하였음.
+
+스캔된 디바이스들은 별도의 객체 array list에 저장해놨다가, **recycler view**를 이용해서 보여주도록 해놨음. 소수의 기기만 운용한다는
+가정을 해서, 한 화면에 꽉 차는 cardView를 좌우로 스와이프 해서 recycler view를 탐색할 수 있도록 해놨음.
 
 2. 메인 메뉴  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/menu.jpg" width="40%" height="30%">
 
-온도, PPG, ECG는 각각 Fragment로 구현되어 있음.
+각각의 온도, PPG, ECG 버튼을 누르면 해당 fragment로 전환하도록 구현.
 
 bluetooth 연결, 데이터 송수신(write, read, notification characteristic), 연결 종료 처리 및 관련 객체 핸들링은 
-백그라운드에서 처리하도록 Service(BluetoothLeService)에 관련 동작이 정의되어 있음.
+백그라운드에서 처리하도록 <u>**Service**</u>(BluetoothLeService)에 관련 동작이 정의되어 있음.
 
 3. 체온 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_temp.jpg" width="40%" height="30%">
 
+체온 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 <u>**mpAndroidChart api**</u>를 사용하였음.
 
 5. 심박수(PPG) 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ppg.jpg" width="40%" height="30%">
 
-심박수 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 별도의 UI Thread에서 일정 인터벌 마다 sleep하여,
+심박수 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 별도의 **<u>UI Thread**</u>에서 일정 인터벌 마다 sleep 한다음,
 그래프 객체에 데이터를 추가하여 그리도록 해놨음.
 
+```java
+
+```
+
 초기 일정 시간동안은 디바이스가 ppg를 측정하기 위해 세팅을 하는데, 이 때는 아무 의미 없는 nosie값이 전송됨. 따라서
-일정 시간 기다렸다가, 측정 데이털르 보여주도록 해놨음.
+일정 시간 기다렸다가, 측정 데이터를 보여주도록 해놨음.
 
 표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 오프셋이 크거나, 두 데이터 사이의 차이가 너무 커서 정확한 
-수치를 그래프에 표시하지는 안음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 그렸음.
+수치를 그래프에 표시하지는 않았음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 추가함.
 
 6. 심박수(ECG) 측정  
 
@@ -64,6 +71,8 @@ this.ecg2 = ((dataPacket[7] & 0xc0) >> 6) + ((dataPacket[8] & 0xff) << 2) + ((da
 this.ecg3 = ((dataPacket[10] & 0xc0) >> 6) + ((dataPacket[11] & 0xff) << 2) + ((dataPacket[12] & 0xff) << 10) + ((dataPacket[13] & 0x3f) << 18);
 this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((dataPacket[15] & 0xff) << 10) + ((dataPacket[16] & 0x3f) << 18);
 ```
+
+7. BLE 연결, 처리 관련 Service
 
 ---
 
