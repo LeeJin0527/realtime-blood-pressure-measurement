@@ -9,10 +9,10 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 사용 언어 : Java, Kotlin
 
 프로젝트 수행기간 동안은 java로 작업하였습니다. 구현된 버전의 저장소 위치는 다음과 같습니다.  
-[링크]!
+[=>java 버전 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_final_version)
 
 프로젝트가 끝나고 나서, kotlin으로 구현된 버전은 아래 저장소 위치에 있습니다.  
-[링크]!
+[=>kotlin 버전 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_kotlin_version/Kotlin_ver)
 
 ***
 
