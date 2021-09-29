@@ -14,9 +14,9 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 프로젝트가 끝나고 나서, kotlin으로 구현된 버전은 아래 저장소 위치에 있습니다.  
 [링크]!
 
-### Demo 
+***
 
-#### 1. 블루투스 기기 선택화면
+### 1. 블루투스 기기 선택화면
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/device_select.jpg" width="40%" height="30%">
 
@@ -25,7 +25,9 @@ BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE �
 스캔된 디바이스들은 별도의 객체 array list에 저장해놨다가, **recycler view**를 이용해서 보여주도록 해놨음. 소수의 기기만 운용한다는
 가정을 해서, 한 화면에 꽉 차는 cardView를 좌우로 스와이프 해서 recycler view를 탐색할 수 있도록 해놨음.
 
-#### 2. 메인 메뉴  
+***
+
+### 2. 메인 메뉴  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/menu.jpg" width="40%" height="30%">
 
@@ -34,13 +36,17 @@ BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE �
 bluetooth 연결, 데이터 송수신(write, read, notification characteristic), 연결 종료 처리 및 관련 객체 핸들링은 
 백그라운드에서 처리하도록 <u>**Service**</u>(BluetoothLeService)에 관련 동작이 정의되어 있음.
 
-#### 3. 체온 측정  
+***
+
+### 3. 체온 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_temp.jpg" width="40%" height="30%">
 
 체온 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 <u>**mpAndroidChart api**</u>를 사용하였음.
 
-#### 4. 심박수(PPG) 측정  
+***
+
+### 4. 심박수(PPG) 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ppg.jpg" width="40%" height="30%">
 
@@ -58,8 +64,9 @@ activity.runOnUiThread(new Runnable() {
         myGraph.addEntry(ecgData.getEcg4());
     }
 });
-``` 
-  
+```
+
+***  
   
 초기 일정 시간동안은 디바이스가 ppg를 측정하기 위해 세팅을 하는데, 이 때는 아무 의미 없는 nosie값이 전송됨. 따라서
 일정 시간 기다렸다가, 측정 데이터를 보여주도록 해놨음.
@@ -67,7 +74,9 @@ activity.runOnUiThread(new Runnable() {
 표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 오프셋이 크거나, 두 데이터 사이의 차이가 너무 커서 정확한 
 수치를 그래프에 표시하지는 않았음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 추가함.
 
-#### 5. 심박수(ECG) 측정  
+***
+
+### 5. 심박수(ECG) 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg%202.jpg" width="40%" height="30%">
 
@@ -82,7 +91,19 @@ this.ecg3 = ((dataPacket[10] & 0xc0) >> 6) + ((dataPacket[11] & 0xff) << 2) + ((
 this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((dataPacket[15] & 0xff) << 10) + ((dataPacket[16] & 0x3f) << 18);
 ```
 
-#### 6. BLE 연결, 처리 관련 Service
+***
+
+### 6. BLE 연결, 처리 관련 Service  
+
+구글 예제를 참조하여, 작성  
+(https://android.googlesource.com/platform/development/+/f8a92396babb6592bb8780866def23795f3dab70/samples/BluetoothLeGatt/src/com/example/bluetooth/le/BluetoothLeService.java)
+
+  
+블루투스를 이용해 데이터를 송수신할 때는 관련 프로토콜에 따라 GATT에 정의되어 있는 동작(characteristic)인 read, write, notification
+에 대한 정의가 필요함. 해당 동작에 대한 매서드 정의, notification을 위한 callback method, 그리고 descriptor 정의등이 있음.
+
+> 이때, notification은 체온, 심박 측정과 같이 주변기기(peripheral)에서 스마트폰으로 단방향으로
+> 데이터를 보내는 characteristic을 의미
 
 ---
 
