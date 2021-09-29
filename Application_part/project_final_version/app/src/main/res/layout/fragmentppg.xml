@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:tag ="ppgfragment"
+    android:id = "@+id/fg_ppg"
+    >
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/shadow"
+        >
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/LineChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="MissingClass" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <android.widget.Button
+            android:id="@+id/start"
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="25dp"
+            android:textSelectHandle="@anim/fragment_fade_exit"
+            android:background="@drawable/transparent_bg_bordered_button"
+            android:text="측정하기"
+            />
+        <android.widget.Button
+            android:id="@+id/pause"
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="25dp"
+            android:textSelectHandle="@anim/fragment_fade_exit"
+            android:background="@drawable/transparent_bg_bordered_button"
+            android:visibility="gone"
+            android:text="일시정지" />
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/shadow"
+        >
+
+        <TextView
+            android:id="@+id/ppg_sensor_value_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_gravity="center"
+            android:text="BPM" />
+
+        <TextView
+            android:id="@+id/ppg_sensor_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:text=""
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/shadow"
+        >
+
+        <TextView
+            android:id="@+id/ppg_sensor_confidence_value_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="Confidence"
+            android:layout_gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/ppg_sensor_confidence_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:text=""
+            android:visibility="visible" />
+    </LinearLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/shadow"
+        >
+        <TextView
+            android:id="@+id/ppg_sensor_activity_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:layout_gravity="center"
+            android:text="Activity"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/ppg_sensor_activity_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:layout_gravity="center"
+            android:text="rest"
+            android:textColorHighlight="@color/black"
+            android:visibility="visible" />
+    </LinearLayout>
+
+
+</LinearLayout>
+
+
+
+
