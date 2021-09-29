@@ -1,11 +1,11 @@
-## RealTime Blood Pressure
+# RealTime Blood Pressure
 
 MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드 스마트폰 어플리케이션을 이용하여
 사용자의 체온, 심박수(ECG, PPG)를 측정하여 수집한 다음 수치와 실시간 그래프로 보여주고, 파일로 저장
 하는 프로젝트입니다.
 
 
-## Android Application Part
+# Android Application Part
 사용 언어 : Java, Kotlin
 
 프로젝트 수행기간 동안은 java로 작업하였습니다. 구현된 버전의 저장소 위치는 다음과 같습니다.  
@@ -66,19 +66,38 @@ activity.runOnUiThread(new Runnable() {
 });
 ```
 
-***  
-  
 초기 일정 시간동안은 디바이스가 ppg를 측정하기 위해 세팅을 하는데, 이 때는 아무 의미 없는 nosie값이 전송됨. 따라서
 일정 시간 기다렸다가, 측정 데이터를 보여주도록 해놨음.
 
+
 표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 오프셋이 크거나, 두 데이터 사이의 차이가 너무 커서 정확한 
 수치를 그래프에 표시하지는 않았음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 추가함.
+
+```java
+if(num1 > num2){
+    max = (float) num1;
+    min = (float) num2;
+    diff = (max - min)*0.01f;
+    num1 = num2 + diff;
+    max = (float) num1;
+
+}
+else{
+    max = (float) num2;
+    min = (float) num1;
+    diff = (max - min)*0.01f;
+    num2 = num1 + diff;
+    max = (float) num2;
+}
+```
 
 ***
 
 ### 5. 심박수(ECG) 측정  
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg%202.jpg" width="40%" height="30%">
+
+<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ecg2_play.gif" width="40%" height="30%">
 
 ECG와 PPG는 블루투스에서 한 번 수신될때 20bytes씩 데이터를 받음. 하지만, ECG는 PPG와 다르게 한 번 수신받을 때 순차적으로 측정된 
 4개의 ECG 데이터를 받음. 4개의 ECG 데이터를 한번에 그릴때, 순차적으로 그려주어야 하므로, PPG와 다르게 처리.
@@ -107,7 +126,7 @@ this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((
 
 ---
 
-## Device Part
+# Device Part
 사용 언어 : C/C++
 
 대부분의 기능은 제조사에서 이미 구현을 해놓았음. 따라서, 프로젝트를 수행하는 동안 저전력 블루투스 기술 구현 이해를 위해
