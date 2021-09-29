@@ -19,6 +19,11 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 
 1. 블루투스 기기 선택화면  
 
+
+<img src="./Documentation/images/device_select.jpg" width="40%" height="30%">
+
+<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/device_select.jpg" width="40%" height="30%">
+
 ![device_select.png](./Documentation/images/device_select.jpg){: width="50%" height="50%"}
 
 BLE를 스캔할 때, 특정 서비스(기기)만 스캔되도록 UUID 필터를 추가해줌.
