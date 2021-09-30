@@ -1,4 +1,0 @@
-[paths]
-default = https://developer.mbed.org/users/switches/code/Adafruit_FeatherOLED
-[ui]
-ignore.local = .hg/hgignore

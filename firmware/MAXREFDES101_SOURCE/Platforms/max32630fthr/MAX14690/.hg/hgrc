@@ -1,4 +1,0 @@
-[paths]
-default = https://os.mbed.com/teams/MaximIntegrated/code/MAX14690
-[ui]
-ignore.local = .hg/hgignore
