@@ -119,10 +119,8 @@ this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((
 
   
 블루투스를 이용해 데이터를 송수신할 때는 관련 프로토콜에 따라 GATT에 정의되어 있는 동작(characteristic)인 read, write, notification
-에 대한 정의가 필요함. 해당 동작에 대한 매서드 정의, notification을 위한 callback method, 그리고 descriptor 정의등이 있음.
+에 대한 정의가 필요함. 해당 동작에 대한 객체, 매서드 정의, notification을 위한 callback method, 그리고 descriptor 정의등이 있음.
 
-> 이때, notification은 체온, 심박 측정과 같이 주변기기(peripheral)에서 스마트폰으로 단방향으로
-> 데이터를 보내는 characteristic을 의미
 
 ---
 
@@ -132,7 +130,7 @@ this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((
 대부분의 기능은 제조사에서 이미 구현을 해놓았음. 따라서, 프로젝트를 수행하는 동안 저전력 블루투스 기술 구현 이해를 위해
 여러 간단한 코드를 추가하거나 수정해보는 작업을 함.
 
-이외에 간단하게 디바이스 화면을 바꿔본다던지, 동작에 따른 LED 추가/변경, 기능 수행에 필요한 코드 추적을 위한 코드 리뷰등을
+이외에 간단하게 디바이스 화면을 바꿔본다던지, 동작에 따른 LED 추가/변경, 기능 수행에 필요한 코드 추적을 위한 코드 리뷰등의 리버스 엔지니어링을
 수행하였음.
 
 

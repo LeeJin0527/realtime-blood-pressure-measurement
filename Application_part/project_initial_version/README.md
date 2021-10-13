@@ -1,39 +1,38 @@
-## To-do list
+## BLE 디바이스 식별/ 연결/ 데이터 패킷 송수신 디버깅등 프로젝트 초기에 대한 내용입니다.
 
-1. 블루투스 peripherals를 scan할 때, MAXREFDES101만 scan하도록
-
-	-> 이건 scan할 때, 특정 service uuid만 scan하도록 하면 될듯
-	
-2. notify를 통해 데이터를 연속으로 받을 수 있도록
-
-## 01.13일자
-
-BLE connection, read, write됨
-이제 notify이용해서 센서값 연속적으로 읽는 방뻐 구현
+***
 
 ![](../documentation/images/1.JPG)
-블루투스 장치 Scanning
-나중에는 특정 디바이스만 스캔 되도록 해야할듯
+블루투스 장치 Scanning 구현
+
+scanning시 MAXREFDES 101 장비만 스캔되도록 filtering이 필요함.
+
+***
 
 ![](../documentation/images/2.JPG)
-중간에 server(MAXREFDES101)에서 제공하는 characteristic목록과 대응하는 uuid를 보여줌
+
+BLE가 연결된 상태에서, 온도에 대한 문자열 command("read temp 0")를 write를 구현한 뒤 확인.
+
+중간에 spinner 옆에 해당 대응하는 write characteristic의 UUID가 표시되도록 함. 
+
+***
 
 ![](../documentation/images/3.JPG)
-온도 버튼을 클릭하면 정상적으로 write되어 시계에서 온도값을 보냄
-마찬가지로 stop 커맨드도 정상적으로 write되어 센싱 중단 수행
 
-## 01.14~01.18
+온도 버튼을 클릭하면 정상적으로 write되어 디바이스(시계)에서 데이터를 보낼 수 있음을 확인(좌측 시리얼 통신 프로그램)
 
-read, notification 기능 공부및 추가
+마찬가지로 stop 커맨드도 정상적으로 write되어 센싱 중단 수행을 확인.
 
-notify를 통해서 characteristic이 바뀔때마다 callback 함수에서 호출되면서 데이터를 화면에 표시해주도록함.
-이 때, 간략하게 16진수 형태의 20byte배열 간략하게 알아봄
-
-좋은 소식은 DSinterface에 관한 명렁어 문서를 찾음.
+***
 
 ## 영상
 
 [![notify시연](http://img.youtube.com/vi/4-1Gxlas5qk/0.jpg)](https://www.youtube.com/watch?v=4-1Gxlas5qk) 
+
+센싱 측정 command를 보내면, 디바이스에서는 계속해서 알아서 데이터를 보내는 notification characteristic이 필요함. notify 기능을 어플리케이션에 
+추가한 뒤 notify callBack이 일어날때 마다 Data TextView가 변경되도록 표시함.
+
+***
 
 ## References
 
