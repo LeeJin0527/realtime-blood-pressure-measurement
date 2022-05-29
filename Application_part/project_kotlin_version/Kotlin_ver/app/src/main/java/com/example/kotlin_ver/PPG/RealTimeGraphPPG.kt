@@ -14,10 +14,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 class RealTimeGraphPPG {
     private val TAG = RealTimeGraphPPG::class.java.simpleName
-    private var chart: LineChart? = null
-    private val minX = 0f
-    private val maxX = 0f
-    private var count = 0
+    lateinit var chart: LineChart
 
     constructor(view: View) {
         creatGraph(view)
@@ -25,25 +22,31 @@ class RealTimeGraphPPG {
 
     private fun creatGraph(view: View) {
         chart = view.findViewById<View>(R.id.LineChart) as LineChart
-        chart!!.setDrawGridBackground(false)
-        chart!!.setBackgroundColor(Color.WHITE)
-        chart!!.xAxis.isEnabled = false
-        chart!!.axisLeft.setDrawLabels(true)
-        chart!!.axisLeft.isEnabled = true
-        chart!!.axisRight.setDrawLabels(false)
-        chart!!.xAxis.setDrawLabels(true)
-        chart!!.xAxis.setDrawGridLines(false)
-        chart!!.xAxis.isEnabled = true
-        chart!!.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart!!.axisRight.isEnabled = false
-        chart!!.setVisibleXRangeMaximum(20f)
-        chart!!.description.isEnabled = false
-        chart!!.invalidate()
+        chart.apply {
+            setDrawGridBackground(false)
+            setBackgroundColor(Color.WHITE)
+            xAxis.isEnabled = false
+            axisLeft.setDrawLabels(true)
+            axisLeft.isEnabled = true
+            axisRight.setDrawLabels(false)
+            xAxis.setDrawLabels(true)
+            xAxis.setDrawGridLines(false)
+            xAxis.isEnabled = true
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            axisRight.isEnabled = false
+            setVisibleXRangeMaximum(20f)
+            description.isEnabled = false
+            isAutoScaleMinMaxEnabled = true
+            invalidate()
+        }
+
     }
 
-    fun addEntry(num1: Double, num2: Double) {
-        var num1 = num1
-        var num2 = num2
+    fun addEntry(ppg: PPGData){
+
+        var num1 = ppg.grnCnt.toFloat()
+        var num2 = ppg.grn2Cnt.toFloat()
+
         var data = chart!!.data
         val min: Float
         var max: Float
@@ -72,10 +75,10 @@ class RealTimeGraphPPG {
             chart!!.data = data
         }
 
-        var set = data.getDataSetByIndex(0)
+        var set: ILineDataSet? = data.getDataSetByIndex(0)
         // set.addEntry(...); // can be called as well
-        var set2 = data.getDataSetByIndex(1)
-        if (set == null) {
+        var set2: ILineDataSet? = data.getDataSetByIndex(1)
+        if (set == null || set2 == null) {
             set = createSet()
             data.addDataSet(set)
             set2 = createSet2()
@@ -96,12 +99,13 @@ class RealTimeGraphPPG {
         data.notifyDataChanged()
 
         // let the chart know it's data has changed
-        chart!!.notifyDataSetChanged()
-        //count++;
-        //if(count >= 75)yAxiSetting();
-        chart!!.setVisibleXRangeMaximum(120f)
-        // this automatically refreshes the chart (calls invalidate())
-        chart!!.moveViewTo(data.entryCount.toFloat(), 50f, YAxis.AxisDependency.LEFT)
+        data.calcMinMaxY(data.xMin, data.xMax)
+
+
+        chart.notifyDataSetChanged()
+        chart.setVisibleXRangeMaximum(200f)
+        chart.moveViewToX(data.entryCount.toFloat())
+
     }
 
     private fun createSet(): LineDataSet {
@@ -126,7 +130,4 @@ class RealTimeGraphPPG {
         return set
     }
 
-    private fun yAxiSetting() {
-        count = 0
-    }
 }

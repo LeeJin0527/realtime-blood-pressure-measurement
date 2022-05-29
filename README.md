@@ -8,11 +8,12 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 # Android Application Part
 사용 언어 : Java, Kotlin
 
-프로젝트 수행기간 동안은 java로 작업하였습니다. 구현된 버전의 저장소 위치는 다음과 같습니다.  
-[=>java 버전 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_final_version)
+[프로젝트 소스 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_kotlin_version/Kotlin_ver)
 
-프로젝트가 끝나고 나서, kotlin으로 구현된 버전은 아래 저장소 위치에 있습니다.  
-[=>kotlin 버전 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_kotlin_version/Kotlin_ver)
+# 어플리케이션 구조
+<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/project_description.jpg" width="40%" height="30%">
+
+
 
 ***
 
@@ -50,44 +51,68 @@ bluetooth 연결, 데이터 송수신(write, read, notification characteristic),
 
 <img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/ongoing_ppg.jpg" width="40%" height="30%">
 
-심박수 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 별도의 **<u>UI Thread**</u>에서 일정 인터벌 마다 sleep 한다음,
-그래프 객체에 데이터를 추가하여 그리도록 해놨음.
+심박수 측정 fragment에서 실시간으로 그래프를 그려주는 부분은 블루투스 브로드캐스트 리시버에서 데이터를 수신받을 때 마다 
+별도의 **<u>UI Thread**</u>에서
+그래프 객체에 데이터를 그리도록 해놨음. 심박수 데이터는 한번만 보내는 것이 아니라, 일정 간격으로 알림(notification)처럼 
+데이터가 수신됨. 따라서, 콜백처럼 구현하기 위해, 각각의 fragment에서 그래프를 그리는 메서드를 호출하는게 아니라 
+fragment들을 관리하는 브로드캐스트 리시버에서 처리하도록 해놨음.
 
-```java
-activity.runOnUiThread(new Runnable() {
-    @Override
-        public void run() {
-        ECGData ecgData = ((MenuActivity)activity).ecgData;
-        myGraph.addEntry(ecgData.getEcg1());
-        myGraph.addEntry(ecgData.getEcg2());
-        myGraph.addEntry(ecgData.getEcg3());
-        myGraph.addEntry(ecgData.getEcg4());
+
+```kotlin
+private val mGattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action
+        if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+            mConnected = true
+        } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+            mConnected = false
+        } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+            setupGattCharacteristic(mBluetoothLeService!!.getSupportedGattServices())
+        } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+
+            val stringData = intent.getStringExtra(BluetoothLeService.EXTRA_DATA)
+            val byteData = hexaStringToByteArray(stringData)
+
+            when(mode){
+                "TEMP" -> {
+                    fragmentTemp.addData(byteData)
+                }
+
+                "ECG" -> {
+                    fragmentECG.addData(byteData)
+                }
+
+                "PPG" -> {
+                    fragmentPPG.addData(byteData)
+                }
+            }
+        }
     }
-});
+}
 ```
 
-초기 일정 시간동안은 디바이스가 ppg를 측정하기 위해 세팅을 하는데, 이 때는 아무 의미 없는 nosie값이 전송됨. 따라서
-일정 시간 기다렸다가, 측정 데이터를 보여주도록 해놨음.
+<br><br>
+
 
 
 표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 오프셋이 크거나, 두 데이터 사이의 차이가 너무 커서 정확한 
 수치를 그래프에 표시하지는 않았음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 추가함.
 
-```java
+```kotlin
 if(num1 > num2){
-    max = (float) num1;
-    min = (float) num2;
-    diff = (max - min)*0.01f;
-    num1 = num2 + diff;
-    max = (float) num1;
+    max = (float) num1
+    min = (float) num2
+    diff = (max - min)*0.01f
+    num1 = num2 + diff
+    max = (float) num1
 
 }
 else{
-    max = (float) num2;
-    min = (float) num1;
-    diff = (max - min)*0.01f;
-    num2 = num1 + diff;
-    max = (float) num2;
+    max = (float) num2
+    min = (float) num1
+    diff = (max - min)*0.01f
+    num2 = num1 + diff
+    max = (float) num2
 }
 ```
 
@@ -100,9 +125,9 @@ else{
 </p>
 
 ECG와 PPG는 블루투스에서 한 번 수신될때 20bytes씩 데이터를 받음. 하지만, ECG는 PPG와 다르게 한 번 수신받을 때 순차적으로 측정된 
-4개의 ECG 데이터를 받음. 4개의 ECG 데이터를 한번에 그릴때, 순차적으로 그려주어야 하므로, PPG와 다르게 처리.
+4개의 ECG 데이터를 받음. 4개의 ECG 데이터를 한번에 그릴때, 순차적으로 그려주어야 하므로, PPG와 다르게 데이터를 처리 해야함.
 
-```java
+```kotlin
 // ecg data handling code snippet
 this.ecg1 = ((dataPacket[4] & 0xc0) >> 6) + ((dataPacket[5]& 0xff) << 2) + ((dataPacket[6] & 0xff) << 10) + ((dataPacket[7] &0x3f) << 18);
 this.ecg2 = ((dataPacket[7] & 0xc0) >> 6) + ((dataPacket[8] & 0xff) << 2) + ((dataPacket[9] & 0xff) << 10) + ((dataPacket[10] & 0x3f) << 18);
@@ -114,7 +139,7 @@ this.ecg4 = ((dataPacket[13] & 0xc0) >> 6) + ((dataPacket[14] & 0xff) << 2) + ((
 
 ### 6. BLE 연결, 처리 관련 Service  
 
-구글 예제를 참조하여, 작성  
+구글 예제를 참조하여, 기능 구현을 해봄.  
 (https://android.googlesource.com/platform/development/+/f8a92396babb6592bb8780866def23795f3dab70/samples/BluetoothLeGatt/src/com/example/bluetooth/le/BluetoothLeService.java)
 
   

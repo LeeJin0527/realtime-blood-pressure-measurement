@@ -12,6 +12,14 @@
         <entry key="..\:/Users/KJG/Desktop/app/Kotlin_ver/app/src/main/res/layout/gatt_services_characteristics.xml" value="0.2046875" />
         <entry key="..\:/Users/KJG/Desktop/app/Kotlin_ver/app/src/main/res/layout/mainactivity_recyclerview.xml" value="0.4739583333333333" />
         <entry key="..\:/Users/KJG/Desktop/app/Kotlin_ver/app/src/main/res/layout/menu.xml" value="0.14427083333333332" />
+        <entry key="app/src/main/res/layout/actionbar_indeterminate_progress.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/bledeviceitem.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/fragmentecg.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/fragmentppg.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/fragmenttemp.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/gatt_services_characteristics.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/mainactivity_recyclerview.xml" value="0.5192708333333333" />
+        <entry key="app/src/main/res/layout/menu.xml" value="0.5192708333333333" />
       </map>
     </option>
   </component>

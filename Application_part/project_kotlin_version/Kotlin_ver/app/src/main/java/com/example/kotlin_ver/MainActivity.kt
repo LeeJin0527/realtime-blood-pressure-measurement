@@ -32,11 +32,12 @@ import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity(){
-    private var mScanning = true
     private lateinit var mBLEadapter : BluetoothAdapter
     private lateinit var mBLERecyclerView : RecyclerView
     private lateinit var mBLEList : ArrayList<BluetoothDevice>
     private lateinit var mBLEDeviceAdapter : BLEDataAdapter
+
+    private var mScanning = true
     private val REQUEST_ENABLE_BT = 1
     private val REQUEST_MULTIPLE_PERMISSION = 2
     private val requestPermission = arrayOf(
@@ -44,7 +45,6 @@ class MainActivity : AppCompatActivity(){
         android.Manifest.permission.BLUETOOTH_ADMIN,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
         android.Manifest.permission.READ_EXTERNAL_STORAGE)
-
 
     val mScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -106,7 +106,6 @@ class MainActivity : AppCompatActivity(){
         mBLEDeviceAdapter = BLEDataAdapter(mBLEList)
         mBLEDeviceAdapter.itemClickListener = object : BLEDataAdapter.ItemClickListener{
             override fun onItemClick(view: View?, position: Int) {
-                Log.i("확인용", position.toString())
                 val BLEDeviceName: String = mBLEList.get(position).getName()
                 val BLEDeviceMAC: String = mBLEList.get(position).getAddress()
 
@@ -121,7 +120,6 @@ class MainActivity : AppCompatActivity(){
             }
         }
         mBLERecyclerView.adapter = mBLEDeviceAdapter
-
         mBLERecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
         val snapHelper: SnapHelper = PagerSnapHelper()

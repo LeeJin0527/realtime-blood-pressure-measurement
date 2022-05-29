@@ -27,9 +27,7 @@ class RealTimeGraphTemp {
         chart!!.xAxis.isEnabled = false
         val leftAxis = chart!!.axisLeft
         leftAxis.isEnabled = true
-        //leftAxis.setTextColor(getResources().getColor(R.color.colorGrid));
         leftAxis.setDrawGridLines(true)
-        //leftAxis.setGridColor(getResources().getColor(R.color.colorGrid));
         val rightAxis = chart!!.axisRight
         rightAxis.isEnabled = false
         chart!!.axisLeft.setDrawLabels(true)
@@ -41,7 +39,8 @@ class RealTimeGraphTemp {
         chart!!.invalidate()
     }
 
-    fun addEntry(num: Double) {
+    fun addEntry(temp: TempData){
+        var num = temp.value
         var data = chart!!.data
         if (Math.abs(num.toFloat() - minX) > 2) {
             minX = num.toFloat() - 1.8.toFloat()
@@ -69,12 +68,13 @@ class RealTimeGraphTemp {
         )
         data.notifyDataChanged()
 
-        // let the chart know it's data has changed
         chart!!.notifyDataSetChanged()
         chart!!.setVisibleXRangeMaximum(15f)
-        // this automatically refreshes the chart (calls invalidate())
+
         chart!!.moveViewTo(data.entryCount.toFloat(), 50f, YAxis.AxisDependency.LEFT)
+
     }
+
 
     private fun createSet(): LineDataSet {
         val set = LineDataSet(null, "체온")

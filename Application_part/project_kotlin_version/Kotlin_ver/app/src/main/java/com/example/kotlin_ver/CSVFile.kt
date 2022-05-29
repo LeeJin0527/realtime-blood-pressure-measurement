@@ -68,9 +68,9 @@ class CSVFile {
             if (!file.exists()) {
                 file.createNewFile()
             }
-            writer.append(Integer.toString(tempData.getCount()))
+            writer.append("${tempData.count}")
             writer.append(",")
-            writer.append(java.lang.Double.toString(tempData.getValue()))
+            writer.append("${tempData.value}")
             writer.append("\n")
             writer.close()
         } catch (e: IOException) {
@@ -85,13 +85,13 @@ class CSVFile {
             if (!file.exists()) {
                 file.createNewFile()
             }
-            writer.append(Integer.toString(ppgData.getCount()))
+            writer.append("${ppgData.count}")
             writer.append(",")
-            writer.append(ppgData.getGrnCnt().toString())
+            writer.append("${ppgData.grnCnt}")
             writer.append(",")
-            writer.append(ppgData.getGrn2Cnt().toString())
+            writer.append("${ppgData.grn2Cnt}")
             writer.append(",")
-            writer.append(ppgData.getHeartRate().toString())
+            writer.append("${ppgData.heartRate}")
             writer.append("\n")
             writer.close()
         } catch (e: IOException) {
@@ -106,23 +106,23 @@ class CSVFile {
             if (!file.exists()) {
                 file.createNewFile()
             }
-            writer.append(Integer.toString(ecgData.getCount()))
+            writer.append("${ecgData.count}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg1()))
+            writer.append("${ecgData.ecg1}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg2()))
+            writer.append("${ecgData.ecg2}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg3()))
+            writer.append("${ecgData.ecg3}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg4()))
+            writer.append("${ecgData.ecg4}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg1eTag()))
+            writer.append("${ecgData.ecg1eTag}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg2eTag()))
+            writer.append("${ecgData.ecg2eTag}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg3eTag()))
+            writer.append("${ecgData.ecg3eTag}")
             writer.append(",")
-            writer.append(Integer.toString(ecgData.getEcg4eTag()))
+            writer.append("${ecgData.ecg4eTag}")
             writer.append("\n")
             writer.close()
         } catch (e: IOException) {

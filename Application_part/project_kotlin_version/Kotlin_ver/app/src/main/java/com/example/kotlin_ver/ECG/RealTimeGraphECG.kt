@@ -12,11 +12,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
-
 class RealTimeGraphECG() {
     lateinit var chart: LineChart
-    private val minX = 0f
-    private val maxX = 0f
 
     constructor(view : View) : this() {
         creatGraph(view)
@@ -24,52 +21,58 @@ class RealTimeGraphECG() {
 
     private fun creatGraph(view: View) {
         chart = view.findViewById<View>(R.id.LineChart) as LineChart
-        chart.setDrawGridBackground(false)
-        chart.setBackgroundColor(Color.WHITE)
-        chart.getAxisLeft().setDrawLabels(true)
-        chart.getAxisLeft().setEnabled(true)
-        chart.getAxisRight().setDrawLabels(false)
-        chart.getXAxis().setDrawLabels(true)
-        chart.getXAxis().setDrawGridLines(false)
-        chart.getXAxis().setEnabled(true)
-        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM)
-        chart.getAxisRight().setEnabled(false)
-        chart.getDescription().setEnabled(false)
-        chart.invalidate()
+        chart.apply {
+            setDrawGridBackground(false)
+            setBackgroundColor(Color.WHITE)
+            getAxisLeft().setDrawLabels(true)
+            getAxisLeft().setEnabled(true)
+            getAxisRight().setDrawLabels(false)
+            getXAxis().setDrawLabels(true)
+            getXAxis().setDrawGridLines(false)
+            getXAxis().setEnabled(true)
+            getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM)
+            getAxisRight().setEnabled(false)
+            getDescription().setEnabled(false)
+            xAxis.mAxisMinimum = 0f
+            xAxis.mAxisMaximum = 200f
+            isAutoScaleMinMaxEnabled = true
+            invalidate()
+        }
+
     }
 
-    fun addEntry(num: Double) {
-        var data: LineData? = chart.getData()
-        chart.getAxisLeft().setAxisMaximum(2000f)
-        chart.getAxisLeft().setAxisMinimum(-2000f)
-        if (data == null) {
+    fun addEntry(ecg: ECGData){
+        var data: LineData? = chart.data
+
+        if(data == null){
             data = LineData()
-            chart.setData(data)
+            chart.data = data
         }
-        var set: ILineDataSet = data.getDataSetByIndex(0)
-        // set.addEntry(...); // can be called as well
-        if (set == null) {
+
+        var set: ILineDataSet? = data.getDataSetByIndex(0)
+        if(set == null){
             set = createSet()
             data.addDataSet(set)
         }
-        data.addEntry(Entry(set.getEntryCount() as Float, num.toFloat()), 0)
+
+        data.addEntry(Entry(set.entryCount.toFloat(), ecg.ecg1.toFloat()), 0)
+        data.addEntry(Entry(set.entryCount.toFloat(), ecg.ecg2.toFloat()), 0)
+        data.addEntry(Entry(set.entryCount.toFloat(), ecg.ecg3.toFloat()), 0)
+        data.addEntry(Entry(set.entryCount.toFloat(), ecg.ecg4.toFloat()), 0)
         data.notifyDataChanged()
 
-        // let the chart know it's data has changed
+        if(data.entryCount >= 200f){
+
+            chart.xAxis.mAxisMinimum = data.entryCount - 200f
+            chart.xAxis.mAxisMaximum = data.entryCount.toFloat()
+        }
+        data.calcMinMaxY(data.xMin, data.xMax)
+
         chart.notifyDataSetChanged()
-        chart.setVisibleXRangeMaximum(130F)
-        // this automatically refreshes the chart (calls invalidate())
-        chart.moveViewTo(data.getEntryCount().toFloat(), 100f, YAxis.AxisDependency.LEFT)
-        //chart.moveViewToX(data.getEntryCount());
-        //chart.moveViewTo(data.getEntryCount(), 50f, YAxis.AxisDependency.RIGHT);
-        //chart.invalidate();
+        chart.setVisibleXRangeMaximum(200f)
+        chart.moveViewToX(data.entryCount.toFloat())
     }
 
-    fun resetMaxandMin() {
-        Log.i("호출 : ", "호출됨!")
-        chart.getAxisLeft().resetAxisMaximum()
-        chart.getAxisLeft().resetAxisMinimum()
-    }
 
     private fun createSet(): LineDataSet {
         val set = LineDataSet(null, "ECG")

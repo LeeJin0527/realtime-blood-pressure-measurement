@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.kotlin_ver.Command
@@ -20,15 +19,15 @@ import java.io.FileWriter
 import java.io.IOException
 
 class FragmentTemp : Fragment(){
-    var start: Button? = null
-    var pause: Button? = null
-
-    var frameLayout: FrameLayout? = null
-    var sensorField: TextView? = null
+    lateinit var start: Button
+    lateinit var pause: Button
+    lateinit var sensorField: TextView
+    lateinit var sensor2Field: TextView
     lateinit var myGraph: RealTimeGraphTemp
-    var realTimeThread: Thread? = null
+
     var activity: Activity? = null
-    var threadFlag: Boolean? = null
+
+    val tempDataList: ArrayList<TempData> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,55 +35,30 @@ class FragmentTemp : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragmenttemp, container, false)
-        start = view!!.findViewById<View>(R.id.start) as Button
-        pause = view!!.findViewById<View>(R.id.pause) as Button
-        sensorField = view!!.findViewById<View>(R.id.temp_sensor_value) as TextView
+        start = view.findViewById(R.id.start)
+        pause = view.findViewById(R.id.pause)
+        sensorField = view.findViewById(R.id.temp_sensor_value)
+        sensor2Field = view.findViewById(R.id.sensor_Fahrenheit_scale_count)
         myGraph = RealTimeGraphTemp(view)
 
         //String CSVPath = ((MenuActivity)getActivity()).AppAbsolutePath;
         val CSVPath = "/Android/data/"
         val myFile = CSVPath + "test.csv"
 
-/*
-        try {
-            FileWriter fw = new FileWriter(myFile);
-
-            fw.append("count");
-            fw.append(",");
-            fw.append("Temperature");
-            fw.append("\n");
-            fw.flush();
-            fw.close();
-            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/plain");
-            intent.putExtra(intent.EXTRA_TITLE, myFile);
-            startActivityForResult(intent, 1);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-*/writeFile()
+        writeFile()
         //Log.i("경로", CSVPath);
-        threadFlag = false
-        start!!.setOnClickListener {
-            (activity as MenuActivity).setViewField(view, "temp")
+
+        start.setOnClickListener {
             (activity as MenuActivity).sendStrCmd(Command.str_readtemp0)
-            start!!.visibility = View.GONE
-            pause!!.visibility = View.VISIBLE
-            threadFlag = true
-            realTimeStart()
+            start.visibility = View.GONE
+            pause.visibility = View.VISIBLE
         }
         pause!!.setOnClickListener {
-            (activity as MenuActivity).setViewField(view, "stop")
             (activity as MenuActivity).sendStrCmd(Command.str_stop)
-            start!!.visibility = View.VISIBLE
-            pause!!.visibility = View.GONE
-            threadFlag = false
-            realTimeThread!!.interrupt()
+            start.visibility = View.VISIBLE
+            pause.visibility = View.GONE
         }
-        val layoutInflater =
-            activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        frameLayout = (activity as MenuActivity).getFrameLayout()
+
         return view
     }
 
@@ -99,28 +73,23 @@ class FragmentTemp : Fragment(){
     override fun onDetach() {
         (getActivity() as MenuActivity).sendStrCmd(Command.str_stop)
         (getActivity() as MenuActivity).mode = "stop"
-        //stop추가 안하면, null point 에러남
-        //stop 커맨드도 값이 바뀌는 경우라서
-        //process_data 메서드가 호출되기 때문
-        frameLayout!!.visibility = View.GONE
-        if (realTimeThread != null) realTimeThread!!.interrupt()
+        (getActivity() as MenuActivity).fragmentContainerLayout.visibility = View.GONE
         super.onDetach()
     }
 
+    fun addData(hexaData: ByteArray){
+        val temp = TempData(hexaData)
+        tempDataList.add(temp)
 
-    fun realTimeStart() {
-        realTimeThread = Thread {
-            while (threadFlag!!) {
-                try {
-                    Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-                activity!!.runOnUiThread { myGraph.addEntry((activity as MenuActivity).valueForGraph) }
-            }
+        sensorField.text = "${temp.value}"
+        sensor2Field.text = "${temp.convertCelciustoF()}"
+
+        getActivity()!!.runOnUiThread {
+            myGraph.addEntry(temp)
         }
-        realTimeThread!!.start()
+
     }
+
 
     /**
      * Test method
