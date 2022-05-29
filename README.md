@@ -11,7 +11,7 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 [프로젝트 소스 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_kotlin_version/Kotlin_ver)
 
 # 어플리케이션 구조
-<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/project_description.jpg" width="60%" height="50%">
+<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/project_description.jpg" width="100%" height="100%">
 
 
 
