@@ -11,7 +11,7 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 [프로젝트 소스 저장소 위치](https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/tree/main/Application_part/project_kotlin_version/Kotlin_ver)
 
 # 어플리케이션 구조
-<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/project_description.jpg" width="40%" height="30%">
+<img src="https://github.com/LeeJin0527/RealtimeBloodPressureMeasurement/blob/main/documentation/images/project_description.jpg" width="60%" height="50%">
 
 
 
@@ -24,7 +24,7 @@ MAXMIM 사의 손목형 헬스 디바이스 인 MAXREFDES 101과 안드로이드
 BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE 서비스 <u>**UUID 필터**</u>를 블루투스 어댑테 객체에 추가한 다음에, 스캔하도록 하였음.
 
 스캔된 디바이스들은 별도의 객체 array list에 저장해놨다가, **recycler view**를 이용해서 보여주도록 해놨음. 소수의 기기만 운용한다는
-가정을 해서, 한 화면에 꽉 차는 cardView를 좌우로 스와이프 해서 recycler view를 탐색할 수 있도록 해놨음.
+가정을 해서, 한 화면에 꽉 차는 cardView를 좌우로 스와이프 해서 recycler view를 탐색할 수 있도록 함.
 
 ***
 
@@ -34,8 +34,10 @@ BLE를 스캔할 때, 심박수 측정 서비스 기기만 스캔되도록 BLE �
 
 각각의 온도, PPG, ECG 버튼을 누르면 해당 fragment로 전환하도록 구현.
 
-bluetooth 연결, 데이터 송수신(write, read, notification characteristic), 연결 종료 처리 및 관련 객체 핸들링은 
-백그라운드에서 처리하도록 <u>**Service**</u>(BluetoothLeService)에 관련 동작이 정의되어 있음.
+bluetooth 연결, 종료 처리, 데이터 송수신(write, read, notification characteristic) 및 BLE 처리 이벤트는
+백그라운드에서 처리하도록 <u>**Service**</u>(BluetoothLeService)에 관련 동작을 구현함.
+<br><br>
+
 
 ***
 
@@ -55,7 +57,7 @@ bluetooth 연결, 데이터 송수신(write, read, notification characteristic),
 별도의 **<u>UI Thread**</u>에서
 그래프 객체에 데이터를 그리도록 해놨음. 심박수 데이터는 한번만 보내는 것이 아니라, 일정 간격으로 알림(notification)처럼 
 데이터가 수신됨. 따라서, 콜백처럼 구현하기 위해, 각각의 fragment에서 그래프를 그리는 메서드를 호출하는게 아니라 
-fragment들을 관리하는 브로드캐스트 리시버에서 처리하도록 해놨음.
+브로드캐스트 리시버에서 처리하도록 해놨음.
 
 
 ```kotlin
@@ -95,8 +97,10 @@ private val mGattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver(
 
 
 
-표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 오프셋이 크거나, 두 데이터 사이의 차이가 너무 커서 정확한 
-수치를 그래프에 표시하지는 않았음. 단순히 경향이나 추세만 확인하는 용도로 그래프를 추가함.
+표시해야 하는 데이터는 두 종류(grnCnt, grn2Cnt)임. 게다가 한쪽의 데이터 크기의 오프셋이 크거나, 
+두 데이터 사이의 차이가 너무 커서 제한된 휴대폰 해상도에서는 그래프가 직선처럼 보이는 문제가 발생했었음. 
+PPG 그래프는 데이터의 추세 및 패턴을 확인하기 위한 목적을 가지고 있으므로, 아래와 같이 한쪽 값은 고정하고
+다른 쪽 값은 상대적인 차이값을 이용해 두 그래프를 한번에 나타내도록 하였음.
 
 ```kotlin
 if(num1 > num2){
