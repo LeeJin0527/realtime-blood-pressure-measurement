@@ -98,9 +98,15 @@ class RealTimeGraphPPG {
         )
         data.notifyDataChanged()
 
-        // let the chart know it's data has changed
-        data.calcMinMaxY(data.xMin, data.xMax)
 
+        if(data.entryCount >= 200f){
+            chart.xAxis.mAxisMinimum = data.entryCount - 200f
+            chart.xAxis.mAxisMaximum = data.entryCount.toFloat()
+        }else{
+            chart.xAxis.mAxisMinimum = 0f
+            chart.xAxis.mAxisMaximum = 200f
+        }
+        data.calcMinMaxY(data.xMin, data.xMax)
 
         chart.notifyDataSetChanged()
         chart.setVisibleXRangeMaximum(200f)

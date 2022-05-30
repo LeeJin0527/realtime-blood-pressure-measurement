@@ -12,6 +12,7 @@ class PPGData(packet: ByteArray) {
     var grnCnt = 0
     var grn2Cnt = 0
     var ppgActivity = 0
+    lateinit var ppgActivityString: String
 
     init {
         count = (packet[1].toInt() and 0xff) + (packet[2].toInt() and 0xff shl 8)
@@ -21,7 +22,32 @@ class PPGData(packet: ByteArray) {
         grn2Cnt = (packet[5].toInt() and 0xf0) + (packet[6].toInt() and 0xff shl 4) + (packet[7].toInt() and 0xff shl 12)
         ppgActivity = (packet[17].toInt() and 0xfe shr 1) + (packet[18].toInt() and 0x01 shl 7)
 
-        Log.i("activity 값 : ", Integer.toString(ppgActivity))
+        when(ppgActivity){
+            0 -> {
+                ppgActivityString = "rest"
+            }
+
+            1 -> {
+                ppgActivityString = "rest"
+            }
+
+            2 -> {
+                ppgActivityString = "walking"
+            }
+
+            3 -> {
+                ppgActivityString = "running"
+            }
+
+            4 -> {
+                ppgActivityString = "biking"
+            }
+
+            5 -> {
+                ppgActivityString = "rhythmic activity"
+            }
+        }
+
     }
 
 }

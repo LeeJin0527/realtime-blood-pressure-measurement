@@ -75,7 +75,7 @@ class FragmentPPG : Fragment() {
 
         ppgValueField.text = "${ppg.heartRate}"
         confidenceField.text = "${ppg.heartRateConfidence}"
-        activityStateField.text = "${ppg.ppgActivity}"
+        activityStateField.text = "${ppg.ppgActivityString}"
 
         activity!!.runOnUiThread {
             myGraph.addEntry(ppg)
